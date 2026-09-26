@@ -1,0 +1,8 @@
+.DS_Store
+*.swp
+*~
+.cache_ekstrak/
+profil_dataset.md
+profil_dataset.json
+*.docx
+!tests/*.docx
