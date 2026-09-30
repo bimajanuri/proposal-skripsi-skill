@@ -16,20 +16,38 @@ Skill ini **berkumpulan** dengan `paper-review` (tabel review literatur lengkap)
 - **Tiga jenjang dalam satu skill**: skripsi, thesis, disertasi — dengan perbedaan kedalaman yang
   nyata (panjang, kontribusi, landasan teori, pengujian, threat to validity, statement of
   contribution)
-- **Sumber data lokal**: scan folder rekursif, klasifikasi otomatis ke 5 kategori
-  (literatur, data, pedoman, aturan/etika, lainnya), ekstraksi teks PDF dan DOCX
+- **Sumber data lokal**: scan folder rekursif, klasifikasi otomatis ke 6 kategori
+  (literatur, data kuantitatif, transkrip/kodebook, pedoman, aturan/etika, lainnya),
+  ekstraksi teks PDF dan DOCX
 - **Analisis dataset nyata**: `profile_dataset.py` memprofilkan CSV/TSV/XLSX/JSON —
   deskriptif, missing, skewness, normalitas, Cronbach's alpha, deteksi skala Likert, dan
   **rekomendasi teknik analisis**. Semua angka di BAB III berasal dari sana, bukan dikarang
+- **Uji statistik nyata, bukan sekadar nama uji**: `stats_tests.py` menjalankan regresi berganda,
+  t-test independen/berpasangan, one-way ANOVA, chi-square, Pearson/Spearman, dan
+  Cronbach's alpha, lalu menghasilkan tabel hasil + narasi siap tempel. Angka hasil uji
+  disalin dari keluarannya, bukan ditulis dari ingatan
+- **Jalur kualitatif penuh**: desain (studi kasus, fenomenologi, grounded theory, analisis
+  tematik), pedoman wawancara, informed consent, pengodean transkrip menjadi tabel kode
+  (`code_interview.py`), penanda kutipan `[K-n]`, dan **Gate 4-Kualitatif** tersendiri
+- **Preset template kampus**: `ugm`, `ui`, `uny`, `itb`, `generic`, `custom` — berisi gaya
+  dokumen, gaya sitasi, daftar kelengkapan, dan struktur bab; bisa `init` (kerangka naskah)
+  dan `check` (naskah vs ketentuan preset), atau `new-custom` untuk institusi lain
+- **Pemeriksa naskah otomatis**: `id_language_check.py` (gaya bahasa Indonesia, struktur
+  BAB I) dan `proposal_doctor.py` (penanda menggantung, placeholder, angka tanpa sumber,
+  daftar pustaka tak dikenal, sinkronisasi DOCX). Kode keluar `1` = gate gagal
+- **Ekspor referensi**: `export_referensi.py` mengubah matriks CSV/JSON menjadi BibTeX,
+  RIS, EndNote XML, dan daftar pustaka siap tempel (APA/Vancouver/IEEE). Field kosong
+  ditandai, bukan ditebak
 - **Rancangan statistik lengkap**: pemetaan hipotesis ke uji, uji asumsi, uji alternatif
   non-parametrik, rumus penentuan sampel (Cochran, Krejcie & Morgan, koreksi populasi hingga)
 - **Metode kuantitatif, kualitatif, mixed-methods, R&D, penelitian tindakan, studi kasus** —
   lengkap dengan elemen wajib dan alasan pemilihan
 - **Argumen gap TAS/Berwald-Daellenbach**: 3 pertanyaan pemandu agar gap bukan sekadar
   "belum diteliti di lokasi X"
-- **Penandaan sumber (provenance)**: `[L-n]` literatur, `[D:kolom]` dataset, `[U]` brief user,
-  `[P-n]` pedoman, `(inferensi)` untuk penalaran agent
-- **Anti-hallucination ketat**: tidak mengarang data, DOI, identitas, responden, atau hasil uji
+- **Penandaan sumber (provenance)**: `[L-n]` literatur, `[D:kolom]` dataset, `[K-n]` kutipan
+  kualitatif, `[U]` brief user, `[P-n]` pedoman, `(inferensi)` untuk penalaran agent
+- **Anti-hallucination ketat**: tidak mengarang data, kutipan, DOI, identitas, responden,
+  atau hasil uji
 - **Ekspor Markdown + DOCX (pandoc)** dengan daftar isi otomatis, pemeriksaan marker, dan
   deteksi placeholder yang belum diisi
 - **Gaya bahasa Indonesia akademik**: panduan kalimat, ejaan KBBI, kapitalisasi, istilah asing
@@ -37,13 +55,15 @@ Skill ini **berkumpulan** dengan `paper-review` (tabel review literatur lengkap)
 ## Pipeline
 
 ```text
-STEP 0: KLARIFIKASI  -> jenjang, bidang, topik, jenis penelitian, folder sumber, format
+STEP 0: KLARIFIKASI  -> jenjang, bidang, topik, jenis penelitian, folder sumber, preset kampus
 STEP 1: INVENTARIS   -> scan + klasifikasi file -> sumber_inventaris.json
 STEP 2: EVIDENSI     -> matriks evidence ringkas + gap (TAS) + online search pelengkap
 STEP 3: FORMULASI    -> latar belakang, rumusan masalah, tujuan, manfaat, hipotesis, variabel
-STEP 4: RANCANGAN    -> desain metode, instrumen, sampling, teknik analisis + analisis dataset
+STEP 4: RANCANGAN    -> desain metode, instrumen, sampling, teknik analisis
+                       + analisis dataset (kuantitatif) ATAU pengodean transkrip (kualitatif)
 STEP 5: DRAFT        -> halaman judul + daftar isi + BAB I-III (Markdown)
-STEP 6: GATE+EXPORT  -> quality gate -> daftar pustaka -> MD + DOCX (pandoc)
+STEP 6: GATE+EXPORT  -> id_language_check + proposal_doctor + campus check
+                       -> daftar pustaka -> MD + DOCX (pandoc)
 ```
 
 Setiap tahap punya quality gate. Konfirmasi user hanya di Step 0 dan sebelum export.
@@ -82,13 +102,18 @@ Skill aktif otomatis saat user meminta, misalnya:
 - "Bikin proposal skripsi dari folder [path] tentang X"
 - "Buat proposal tesis mixed-methods, data saya di [path]"
 - "Bantu susun Bab III, ada data CSV di sini"
-- "Tulis bab 1 dan 2 daripaper-paper folder ini"
+- "Buat proposal kualitatif analisis tematik, transkripnya ada di folder ini"
+- "Buat pedoman wawancara dan informed consent untuk studi kasus saya"
+- "Tulis bab 1 dan 2 dari paper-paper folder ini"
 - "Cek uji statistik yang cocok untuk data ini"
+- "Pakai format skripsi UGM" / "sesuaikan dengan pedoman kampus saya"
+- "Ekspor daftar pustaka ke BibTeX dan EndNote"
+- "Periksa bahasa dan daftar pustaka proposal ini"
 - "Rancang proposal disertasi dengan kontribusi teoretis baru"
 - "Ekspor proposal ke DOCX"
 
 Alur kerja: **Klarifikasi -> Inventaris -> Bukti dan Gap -> Formulasi -> Rancangan -> Draf ->
-Quality Gate -> Export.**
+Quality Gate (otomatis) -> Export.**
 
 ## Contoh Pemakaian Script
 
@@ -99,7 +124,33 @@ scripts/ingest_sources.sh ./folder-sumber --json
 # 2. Profil dataset (tidak butuh pandas; XLSX butuh openpyxl)
 python3 scripts/profile_dataset.py data/responden.csv --out profil
 
-# 3. Konversi naskah ke DOCX
+# 3. Uji statistik nyata -> hasil_uji.md (tabel + narasi) + hasil_uji.json
+python3 scripts/stats_tests.py data/responden.csv --auto --out hasil_uji
+python3 scripts/stats_tests.py data/responden.csv --regresi "DV=kinerja;X=motivasi;dukungan"
+python3 scripts/stats_tests.py data/responden.csv --anova "DV=nilai" --grup=kelas
+
+# 4. Jalur kualitatif: koding transkrip -> tabel kode
+python3 scripts/code_interview.py codebook codebook.csv \
+    --transkrip folder-transkrip/ --out hasil_koding
+python3 scripts/code_interview.py report hasil_koding.json
+
+# 5. Preset template kampus
+python3 scripts/apply_campus_template.py list
+python3 scripts/apply_campus_template.py init ugm --out proposal.md
+python3 scripts/apply_campus_template.py check ugm proposal.md --lengkap
+python3 scripts/apply_campus_template.py new-custom --out-dir institusi_saya.json
+
+# 6. Ekspor daftar pustaka -> BibTeX / RIS / EndNote XML / teks
+python3 scripts/export_referensi.py matriks_referensi.csv --periksa
+python3 scripts/export_referensi.py matriks_referensi.csv \
+    --out-dir outputs/ --gaya apa --urutkan penulis
+
+# 7. Gate otomatis (kode keluar 1 = gagal, perbaiki dulu)
+python3 scripts/id_language_check.py proposal.md --struktur --strict
+python3 scripts/proposal_doctor.py proposal.md \
+    --dataset data/responden.csv --hasil-uji hasil_uji.json --docx proposal.docx --strict
+
+# 8. Konversi naskah ke DOCX
 scripts/build_docx.sh proposal_skripsi.md --out-dir . --title "Judul" --toc --clean
 ```
 
@@ -112,25 +163,53 @@ proposal-skripsi/
 │   ├── data-sources.md                  # Klasifikasi & ekstraksi file lokal
 │   ├── problem-formulation.md           # Gap (TAS), rumusan masalah, tujuan, hipotesis
 │   ├── methodology.md                   # Desain, sampling, instrumen, uji asumsi, etika
+│   ├── qualitative-analysis.md          # Jalur kualitatif: desain, pengodean, mutu, batasan
 │   ├── dataset-analysis.md              # Profil dataset & pemilihan uji statistik
 │   ├── online-search.md                 # Pencarian online pelengkap (OpenAlex/S2)
 │   ├── document-assembly.md             # Struktur BAB, gaya bahasa Indonesia, kerangka berpikir
 │   ├── citation-styles.md               # Daftar pustaka (APA 7/Chicago/Harvard/Vancouver/IEEE)
-│   └── quality-gates.md                 # Gate per tahap + checklist akhir
+│   ├── paper-review-integration.md      # Alih matriks paper-review -> BAB II -> ekspor sitasi
+│   └── quality-gates.md                 # Gate per tahap, Gate 4-Kualitatif, checklist akhir
 ├── templates/
 │   ├── proposal_template.md             # Template dokumen penuh (judul -> BAB I-III)
 │   ├── bab1_pendahuluan.md
 │   ├── bab2_tinjauan_pustaka.md
 │   ├── bab3_metode.md
-│   └── tabel_uji_statistik.md           # Pemetaan hipotesis -> uji
+│   ├── tabel_uji_statistik.md           # Pemetaan hipotesis -> uji
+│   ├── pedoman_wawancara.md             # Instrumen wawancara (Lampiran)
+│   └── informed_consent.md              # Lembar persetujuan & kerahasiaan
+├── campus_templates/                    # Preset pedoman kampus
+│   ├── generic.json  ugm.json  ui.json  uny.json  itb.json  custom.json
 ├── scripts/
 │   ├── ingest_sources.sh                # Scan & ekstrak file lokal -> inventaris
 │   ├── profile_dataset.py               # Profil CSV/XLSX/TSV/JSON + rekomendasi uji
+│   ├── stats_tests.py                   # Uji statistik nyata -> hasil_uji.md/.json
+│   ├── code_interview.py                # Koding transkrip -> tabel kode & cuplikan
+│   ├── export_referensi.py              # Matriks -> BibTeX/RIS/EndNote XML/daftar pustaka
+│   ├── id_language_check.py             # Pemeriksa gaya bahasa Indonesia + struktur BAB I
+│   ├── proposal_doctor.py               # Pemeriksaan akhir naskah (penanda, angka, DOCX)
+│   ├── apply_campus_template.py         # Preset kampus: list/show/init/check/new-custom
 │   └── build_docx.sh                    # Markdown -> DOCX (pandoc) + daftar isi
 ├── tests/
-│   └── sample_dataset.csv               # Dataset contoh untuk uji script
+│   ├── run_tests.sh                     # 42 smoke test seluruh script
+│   ├── sample_dataset.csv
+│   ├── matriks_referensi_contoh.csv
+│   ├── codebook_contoh.csv
+│   ├── transkrip_contoh.md
+│   ├── contoh_bab1.md
+│   └── contoh_proposal_lengkap.md
 └── README.md
 ```
+
+## Menjalankan Test
+
+```bash
+bash tests/run_tests.sh
+```
+
+42 smoke test: inventaris, profil dataset, nilai kritis t/chi-square/F, uji statistik,
+pemeriksa bahasa, proposal doctor, build DOCX, preset kampus, pengodean wawancara, dan
+ekspor referensi (termasuk validasi EndNote XML). Semua harus `PASS` sebelum commit.
 
 ## Prasyarat Opsional
 
@@ -139,26 +218,37 @@ proposal-skripsi/
 | `pdftotext` (poppler) | ekstraksi teks PDF | `brew install poppler` |
 | `pandoc` | ekspor DOCX | `brew install pandoc` |
 | `openpyxl` | baca file `.xlsx` | `pip3 install openpyxl` |
-| `scipy` | uji normalitas parametrik (Shapiro-Wilk) | `pip3 install scipy` |
+| `scipy` / `statsmodels` | uji parametrik & model lebih lengkap | `pip3 install scipy statsmodels` |
 
-Tanpa dependensi apa pun, skill tetap bisa berjalan: hanya membaca MD/TXT, hanya menulis Markdown,
-dan uji normalitas memakai pendekatan skewness-kurtosis.
+Tanpa dependensi apa pun, skill tetap bisa berjalan: hanya membaca MD/TXT, hanya menulis
+Markdown, `profile_dataset.py` memakai pendekatan skewness-kurtosis untuk normalitas, dan
+`stats_tests.py` memakai perhitungan internal (t, F, chi-square, korelasi, regresi linear,
+Cronbach's alpha) dengan incomplete beta/gamma untuk nilai p.
 
 ## Aturan Penting
 
 1. **Output utama = proposal naratif lengkap (BAB I-III)**, bukan kerangka atau bullet.
 2. **Jangan mengarang data** — angka dari `profile_dataset.py` atau perhitungan nyata; bila data
-   belum dianalisis, tulis `(data belum dianalisis)`.
+   belum dianalisis, tulis `(data belum dianalisis)`. Angka hasil uji disalin dari
+   `hasil_uji.md`, bukan ditulis dari ingatan.
 3. **Jangan mengarang literatur, penulis, atau DOI** — setiap `[L-n]` terverifikasi (DOI resolve
    atau file lokal dibaca). Sumber lokal tanpa DOI ditandai `(dokumen lokal)`.
 4. **Jangan mengarang identitas** — NIM, fakultas, dosen, nama responden ditulis `[isi ...]`.
-5. **Jenjang menentukan kedalaman** — S1 penerapan, S2 pengembangan kerangka, S3 kontribusi
+   Nama peserta kualitatif selalu disamarkan.
+5. **Jangan mengarang kutipan** — verbatim harus benar-benar ada di transkrip; jumlah kutipan
+   dihitung dari `code_interview.py`, bukan diperkirakan.
+6. **Jenjang menentukan kedalaman** — S1 penerapan, S2 pengembangan kerangka, S3 kontribusi
    teoretis orisinal.
-6. **Tujuan = 1:1 rumusan masalah.**
-7. **Setiap klaim empiris ber-marker sumber.**
-8. **Human-in-the-loop** — konfirmasi di awal dan sebelum export, tidak per-bagian.
-9. **Simpan artefak sebagai file**, bukan hanya di chat.
-10. **Ejaan KBBI**, output selalu Bahasa Indonesia kecuali diminta lain.
+7. **Tujuan = 1:1 rumusan masalah.**
+8. **Setiap klaim empiris ber-marker sumber** — `[L-n]`, `[D:kolom]`, `[K-n]`, `[U]`.
+9. **Human-in-the-loop** — konfirmasi di awal dan sebelum export, tidak per-bagian.
+10. **Simpan artefak sebagai file**, bukan hanya di chat.
+11. **Jalankan gate otomatis sebelum ekspor** — `id_language_check.py`, `proposal_doctor.py`,
+    `apply_campus_template.py check`. Kode keluar `1` berarti gate gagal.
+12. **Pedoman kampus user mengalahkan preset skill** — preset hanya acuan.
+13. **Kualitatif bukan kuantitatif tanpa angka** — tanpa rumus probabilistik, alpha, atau tabel
+    hipotesis -> uji; tapi wajib ada pedoman wawancara, informed consent, dan alasan saturasi.
+14. **Ejaan KBBI**, output selalu Bahasa Indonesia kecuali diminta lain.
 
 ## Integrasi Skill
 

@@ -52,6 +52,28 @@ melangkah ke tahap berikutnya. Kegagalan gate berarti berhenti, perbaiki, lalu l
 - [ ] **Semua angka dataset berasal dari output `profile_dataset.py` atau perhitungan nyata**
 - [ ] Etika, izin, dan anonimitas sudah dirancang
 - [ ] Untuk S2/S3: batasan rancangan dan mitigasinya ditulis
+- [ ] **Bila kualitatif:** lihat Gate 4-Kualitatif di bawah
+
+## Gate 4-Kualitatif — hanya bila desain bukan survei kuantitatif
+
+> Panduan lengkap: `references/qualitative-analysis.md`. Gate ini **mengganti**
+> bagian Gate 4 yang bersifat kuantitatif (rumus bilabersifat probabilistik,
+> Cronbach's alpha, tabel hipotesis → uji), bukan menambahkannya.
+
+- [ ] Desain kualitatif dipilih satu saja (studi kasus / fenomenologi / grounded
+      theory / analisis tematik / deskriptif) dengan alasan
+- [ ] Paradigma dan pendekatan dinyatakan, bukan hanya nama desain
+- [ ] Informan: kriteria inklusi **dan** eksklusi, teknik purposive/snowball,
+      serta **alasan penghentian pengumpulan data** (saturasi) — bukan sekadar
+      "sampai jenuh"
+- [ ] Instrumen: pedoman wawancara ada di Lampiran (`templates/pedoman_wawancara.md`)
+      dan lembar persetujuan ada (`templates/informed_consent.md`)
+- [ ] Tahapan analisis tertulis berurutan (transkripsi → koding terbuka →
+      kategorikal → tematik), bukan hanya menyebut "analisis tematik"
+- [ ] Validitas: member checking dan/atau triangulasi direncanakan
+- [ ] Penanda kutipan memakai `[K-n]` (bukan `[L-n]`) dan sumbernya jelas
+- [ ] Tidak ada kutipan, kode, tema, atau jumlah peserta yang tidak ada di transkrip
+- [ ] Batasan penelitian dinyatakan jujur (transferabel, bukan generalizable)
 
 ## Gate 5 — Draf (Step 5)
 
@@ -74,6 +96,26 @@ melangkah ke tahap berikutnya. Kegagalan gate berarti berhenti, perbaiki, lalu l
 - [ ] Ekspor berhasil: `.md` dan `.docx` keduanya ada
 - [ ] User menyatakan setuju dengan draf
 
+### Gate 6 otomatis — wajib dijalankan, bukan Reading Mata
+
+Tiga pemeriksa menutupi bagian gate yang mustahil Dicek mata pada naskah panjang:
+
+```bash
+# gaya bahasa Indonesia + struktur BAB I
+python3 scripts/id_language_check.py outputs/proposal.md --struktur --strict
+
+# penanda menggantung, placeholder, angka tanpa sumber, sinkronisasi DOCX
+python3 scripts/proposal_doctor.py outputs/proposal.md \
+    --dataset data/responden.csv --hasil-uji outputs/hasil_uji.json \
+    --docx outputs/proposal.docx --strict
+
+# kesesuaian struktur dengan pedoman kampus
+python3 scripts/apply_campus_template.py check <preset> outputs/proposal.md --lengkap
+```
+
+Temuan **`--strict` = kode keluar 1** berarti gate gagal: perbaiki, jangan diabaikan.
+Temuan kategori selain `galat` (warning) boleh tetap ada bila punya alasan naratif.
+
 ## Penalti (bila gate gagal)
 
 | Gejala | Tindakan |
@@ -84,6 +126,8 @@ melangkah ke tahap berikutnya. Kegagalan gate berarti berhenti, perbaiki, lalu l
 | `[isi ...]` terlalu banyak | tanya user sekali, isi sekaligus |
 | Struktur bab tidak sesuai pedoman | Ikuti pedoman kampus, bukan versi default skill |
 | Bahasa naskah membingungkan | tulis ulang sub-bab tersebut, jangan tambal kata |
+| Kutipan kode tidak ada di transkrip | hapus kutipan; jangan menulis ulang/menafsirkan ulang |
+| Persentase "sebagian besar" tanpa dihitung | hitung penyebutnya dari transkrip, atau ganti dengan deskriptif |
 
 ## Gate khusus Anti-Hallucination (berlaku di semua tahap)
 

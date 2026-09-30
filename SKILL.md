@@ -1,7 +1,7 @@
 ---
 name: proposal-skripsi
 description: |
-  Menyusun **proposal penelitian dalam Bahasa Indonesia** untuk **skripsi, thesis (magister), atau disertasi** — dipilih pengguna. Sumber data & bukti diambil dari **kumpulan file lokal** (PDF, DOCX, MD, TXT, CSV, XLSX, JSON) di folder yang ditunjuk, ditambah pencarian online pelengkap bila literatur lokal minim. Pipeline menghasilkan **BAB I Pendahuluan, BAB II Tinjauan Pustaka, BAB III Metode Penelitian** lengkap, plus halaman judul, kerangka berpikir, rancangan analisis statistik dari dataset, daftar isi, dan ekspor **Markdown + DOCX (pandoc)**. Trigger: "proposal skripsi", "proposal tesis", "proposal disertasi", "bikin proposal", "susun bab 1", "tulis bab 2", "bab 3 metode", "rumusan masalah", "tujuan penelitian", "manfaat penelitian", "latar belakang", "kerangka teori", "tinjauan pustaka", "landasan teori", "hipotesis", "variabel penelitian", "desain penelitian", "metode penelitian", "sampling", "teknik pengumpulan data", "instrumen", "uji statistik", "rancangan analisis", "analisis dataset", "dari folder ini", "proposal dari data csv", "research proposal", "thesis proposal", "dissertation proposal", "make a proposal from my folder". Mode input: Folder (wajib) / Folder+Online. Semua angka statistik wajib berasal dari file dataset nyata, bukan karangan.
+  Menyusun **proposal penelitian dalam Bahasa Indonesia** untuk **skripsi, thesis (magister), atau disertasi** — dipilih pengguna. Sumber data & bukti diambil dari **kumpulan file lokal** (PDF, DOCX, MD, TXT, CSV, XLSX, JSON) di folder yang ditunjuk, ditambah pencarian online pelengkap bila literatur lokal minim. Pipeline menghasilkan **BAB I Pendahuluan, BAB II Tinjauan Pustaka, BAB III Metode Penelitian** lengkap, plus halaman judul, kerangka berpikir, rancangan analisis statistik dari dataset, daftar isi, dan ekspor **Markdown + DOCX (pandoc)**. Trigger: "proposal skripsi", "proposal tesis", "proposal disertasi", "bikin proposal", "susun bab 1", "tulis bab 2", "bab 3 metode", "rumusan masalah", "tujuan penelitian", "manfaat penelitian", "latar belakang", "kerangka teori", "tinjauan pustaka", "landasan teori", "hipotesis", "variabel penelitian", "desain penelitian", "metode penelitian", "sampling", "teknik pengumpulan data", "instrumen", "uji statistik", "rancangan analisis", "analisis dataset", "dari folder ini", "proposal dari data csv", "research proposal", "thesis proposal", "dissertation proposal", "make a proposal from my folder", "proposal kualitatif", "pedoman wawancara", "informed consent", "coding wawancara", "analisis tematik", "studi kasus", "grounded theory", "penelitian kualitatif", "pedoman kampus", "format skripsi ugm", "format skripsi ui", "cek ejaan", "periksa bahasa", "cek daftar pustaka", "ekspor referensi", "export bibtex", "export ris", "endnote", "zotero", "revisi proposal", "periksa proposal". Mode input: Folder (wajib) / Folder+Online. Semua angka statistik wajib berasal dari file dataset nyata atau dihitung dengan `scripts/stats_tests.py`, bukan karangan. Mendukung mode kualitatif, preset template kampus (UGM, UI, Uny, ITB, generic, custom), pemeriksa Bahasa Indonesia, dan ekspor sitasi BibTeX/RIS/EndNote.
 ---
 
 # Proposal Skripsi — Penyusun Proposal Penelitian (Bahasa Indonesia)
@@ -43,17 +43,29 @@ unsur proposal punya justifikasi, dan jenjang menentukan tingkat kedalaman.
 ## Pipeline
 
 ```text
-STEP 0: KLARIFIKASI  → jenjang, bidang, topik, jenis penelitian, folder sumber, mode, format ekspor
-STEP 1: INVENTARIS   → scan folder → klasifikasi (literatur/data/pedoman/format) → inventaris.json
+STEP 0: KLARIFIKASI  → jenjang, bidang, topik, jenis penelitian, folder sumber, mode, preset kampus, format ekspor
+STEP 1: INVENTARIS   → scan folder → klasifikasi (literatur/data/pedoman/transkrip/format) → inventaris.json
 STEP 2: EVIDENSI     → matriks ringkas + gap (TAS) + online search pelengkap bila perlu
 STEP 3: FORMULASI    → latar belakang → rumusan masalah → tujuan → manfaat → pertanyaan → hipotesis → variabel → batasan
-STEP 4: RANCANGAN    → desain metode + instrumen + sampling + teknik analisis + analisis dataset nyata
+STEP 4: RANCANGAN    → desain metode + instrumen + sampling + teknik analisis + analisis dataset/koding nyata
 STEP 5: DRAFT        → halaman judul + daftar isi + BAB I–III (Markdown)
-STEP 6: GATE+EXPORT  → quality gate → referensi → revisi → MD + DOCX (pandoc) + lampiran
+STEP 6: GATE+EXPORT  → id_language_check + proposal_doctor + campus check → referensi → MD + DOCX (pandoc)
 ```
 
 Setiap tahap punya **quality gate**; konfirmasi user hanya diminta **satu kali di awal** (Step 0)
 dan **satu kali sebelum export** (Step 6). Jangan konfirmasi per-bagian.
+
+### Rute berdasarkan jenis penelitian
+
+| Jenis penelitian | Rute pipeline | Tambahan wajib |
+|------------------|---------------|----------------|
+| **Kuantitatif** | STEP 1–6 utuh | `profile_dataset.py` → `stats_tests.py` → tabel uji statistik |
+| **Kualitatif** | STEP 1–6 utuh, Step 4 memakai **§4.4** | pedoman wawancara + informed consent + `code_interview.py` + Gate 4-Kualitatif |
+| **Mixed-methods** | kedua jalur di atas | tabel integrasi data + alasan prioritas (EXPLOR/EXPLAN) |
+| **Dokumen/arsip** | STEP 1–6, sumber = dokumen | tabel inventaris dokumen + kritik sumber ( bukan survei, bukan wawancara ) |
+
+> Kualitatif **bukan** versi kuantitatif tanpa angka: jangan menulis rumus Cochran,
+> Cronbach's alpha, atau tabel hipotesis → uji pada desain kualitatif.
 
 ---
 
@@ -70,15 +82,37 @@ Kumpulkan parameter berikut (cukup seperlunya bila konteks sudah jelas dari brie
 | **Folder sumber** | path | **wajib ditanya bila tidak disebut** |
 | Mode input | Folder / Folder + Online | Folder (+Online bila literatur lokal < 10) |
 | Luas proposal | Pendahuluan saja / BAB I–II / **BAB I–III lengkap** | BAB I–III |
-| Template kampus | Ada file pedoman/format? path | tanpa template → pakai `templates/proposal_template.md` |
-| Gaya sitasi | APA 7 / Chicago / Harvard / Vancouver / IEEE | APA 7 (standar kebanyakan kampus) |
-| Ekspor | MD saja / **MD + DOCX (pandoc)** / + LaTeX | MD + DOCX |
+| **Preset kampus** | UGM / UI / Uny / ITB / generic / custom / pakai file pedoman (path) | generic |
+| Gaya sitasi | APA 7 / Chicago / Harvard / Vancouver / IEEE | APA 7, atau gaya dari preset kampus |
+| Instrumen kualitatif | pedoman wawancara milik sendiri / adaptasi / FGD / observasi | pedoman wawancara (Lampiran) |
+| Ekspor | MD saja / **MD + DOCX (pandoc)** / + LaTeX / + BIB-RIS-ENDNote | MD + DOCX |
 | Nama/NIM dan institution | teks | `[isi ...]` bila tidak ada (jangan dikarang) |
 
 > **Jangan pernah mengarang** nama fakultas/jurusan, nama dosen, NIM, atau nama responden.
 > Tidak diketahui → tulis `[isi nama fakultas/jurusan]`, `[isi NIM]`, dsb.
 
 Simpan hasil klarifikasi ke `kontrak_proposal.json` (kontrak kerja) sebelum lanjut.
+
+### Preset template kampus
+
+Preset berisi gaya dokumen, gaya sitasi, daftar kelengkapan, dan struktur bab per
+kelompok/program studi. Tampilkan pilihan bila user menyebut nama kampus atau
+"format kampus":
+
+```bash
+python3 scripts/apply_campus_template.py list
+python3 scripts/apply_campus_template.py show ugm
+python3 scripts/apply_campus_template.py init ugm --out outputs/proposal.md
+python3 scripts/apply_campus_template.py new-custom --out-dir outputs/institusi_saya.json
+```
+
+- Preset bawaan: `ugm`, `ui`, `uny`, `itb`, `generic`, `custom`.
+- `init` membangun **kerangka** naskah (heading + komentar penanda), bukan narasi —
+  narasi tetap ditulis pada STEP 5.
+- Preset `ugm`, `ui`, `uny`, `itb` disusun dari kebiasaan umum penulisan ilmiah.
+  **Selalu cocokkan dengan pedoman resmi fakultas/program studi user** bila tersedia;
+  bila ada file pedoman di folder sumber, **file itu yang menang**, bukan preset.
+- Aturan yang tidak ada di preset tidak ditebak: script hanya melaporkan, tidak mengubah naskah.
 
 ---
 
@@ -93,8 +127,9 @@ Simpan hasil klarifikasi ke `kontrak_proposal.json` (kontrak kerja) sebelum lanj
 |----------|----------|--------------|
 | **Literatur** | `pdf`, `docx`, `md`, `txt`, `tex`, `epub` (lewati) | BAB II + latar belakang + argumen gap |
 | **Data kuantitatif** | `csv`, `tsv`, `xlsx`, `xls`, `json` (array of objects), `sav` | BAB III: rancangan analisis + profil data |
-| **Pedoman/format** | `docx`, `pdf` bernama pedoman/skripsi/format/…)
-| Aturan/Ethics | `*.md` | versi bab, pedoman sitasi |
+| **Transkrip/kodebook** | `md`, `txt`, `docx`, `csv` (berisi `[P01]`, `Peserta:`, kolom `kode;kategori;tema`) | BAB III §4.4: pengodean, `[K-n]` |
+| **Pedoman/format** | `docx`, `pdf` bernama pedoman/skripsi/format/… | struktur bab, gaya dokumen, daftar isi |
+| **Aturan/Ethics** | `*.md` | versi bab, pedoman sitasi |
 | **Lainnya** | gambar, `pptx`, `zip`, kode | catat di inventaris, jangan dipaksa |
 
 2. Ekstrak teks PDF: `scripts/ingest_sources.sh` memakai `pdftotext -layout` (poppler).
@@ -113,10 +148,14 @@ sumber_inventaris.md         # tabel inventaris + catatan kelengkapan
 .cache_ekstrak/              # teks hasil ekstraksi PDF (file .txt), boleh dihapus setelah draft
 ```
 
+> Bila folder berisi transkrip wawancara, inventaris juga mencatat **jumlah partisipan**
+> per berkas dan apakah `codebook` sudah ada. Jumlah ini tidak boleh dikarang — hitung dari berkas.
+
 ### Quality Gate 1
 - [ ] Semua file terklasifikasi; tidak ada file "misterius" tanpa penjelasan
 - [ ] Setiap literatur punya minimal judul + tahun (dari metadata file atau halaman judul)
 - [ ] Setiap dataset punya nama file + jumlah baris/kolom terverifikasi (lihat Step 4)
+- [ ] Setiap transkrip punya penanda partisipan yang dapat dihitung (lihat §4.4)
 - [ ] File tidak terbaca (scan/gambar) ditandai eksplisit, bukan diabaikan
 
 ---
@@ -132,6 +171,7 @@ Untuk setiap literatur lokal, buat **1 baris ringkas** di `matriks_evidence.md` 
 
 > Bila user minta tabel review lengkap per-paper (12 kolom, provenance `[M-2]`, ekspor
 > CSV/XLSX/BIB/RIS) → **delegasikan ke skill `paper-review`**, jangan diulang di sini.
+> Alih input-output dan kolom minimum matriks: `references/paper-review-integration.md`.
 
 ### 2.2 Pencarian online pelengkap (opsional)
 
@@ -244,11 +284,73 @@ Isi `templates/tabel_uji_statistik.md` dan tempelkan di BAB III:
 |----|-----------------|-----------|------|---------------|------------|
 | RM-1 | … | H₀₁ … / H₁₁ … | `[D:kolom]` | Uji X | α = 0,05 |
 
+Bila data sudah terkumpul, **hitung uji sungguhan, jangan hanya menyebut nama uji**:
+
+```bash
+python3 scripts/stats_tests.py data/responden.csv --auto --out outputs/hasil_uji
+python3 scripts/stats_tests.py data/responden.csv --regresi "DV=kinerja;X=motivasi;dukungan"
+python3 scripts/stats_tests.py data/responden.csv --anova "DV=nilai" --grup=kelas
+python3 scripts/stats_tests.py data/responden.csv --korelasi "v1=x1,v2=x2" --metode spearman
+```
+
+Keluaran `hasil_uji.md` berisi tabel hasil + narasi siap tempel ke BAB III;
+`hasil_uji.json` berisi angka machine-readable untuk pengecekan `proposal_doctor.py`.
+Dukungan: regresi berganda, t-test independen/berpasangan, one-way ANOVA, chi-square,
+Pearson/Spearman, Cronbach's alpha. Memakai `scipy`/`statsmodels` bila terpasang;
+tanpa dependensi pun, perhitungan internal tetap jalan (nilai kritis divalidasi
+terhadap tabel).
+
+> Angka hasil uji di BAB III harus **salin dari `hasil_uji.md`**, termasuk nilai p,
+> t/F/χ², dan keputusan. Jangan menulis "berdasarkan hasil uji, Signifikan" tanpa angka.
+
+### 4.4 Rancangan kualitatif (WAJIB bila desainnya kualitatif)
+
+> Load `references/qualitative-analysis.md` + `references/methodology.md` §6–7.
+> Instrumen: `templates/pedoman_wawancara.md`, `templates/informed_consent.md`.
+
+Ganti — jangan tambahkan — bagian §4.1–4.3 yang bersifat kuantitatif:
+
+| Elemen | Isi minimal |
+|--------|-------------|
+| Paradigma & desain | post-positivis/konstruktivis/kritis/pragmatis + studi kasus/fenomenologi/grounded theory/tematik/deskriptif — + alasan |
+| Partisipan | kriteria inklusi **dan** eksklusi, teknik purposive/snowball, jumlah partisipan |
+| Saturasi | **alasan penghentian** pengumpulan data (bukan sekadar "sampai jenuh") |
+| Teknik pengumpulan | wawancara mendalam/semi-terstruktur, FGD, observasi-partisipan, studi dokumen, catatan lapangan — + alasan kesesuaian |
+| Etika | informed consent tertulis, anonimisasi, hak mundur, penyimpanan rekaman |
+| Analisis | tahapan berurutan: transkripsi → koding terbuka → kategorikal → tematik; alat (Miles-Huberman-Saldaña / BCA / Braun-Clarke) + alasan |
+| Mutu data | member checking, triangulasi sumber/metode, audit trail |
+
+Bila transkrip tersedia, buat tabel kode dengan `scripts/code_interview.py`:
+
+```bash
+python3 scripts/code_interview.py codebook outputs/codebook.csv \
+    --transkrip folder-transkrip/ --out outputs/hasil_koding
+python3 scripts/code_interview.py report outputs/hasil_koding.json
+python3 scripts/code_interview.py merge a.json b.json -o outputs/gabungan.json
+```
+
+Format transkrip yang diharapkan: satu berkas per partisipan, penanda `[P01]`,
+baris bergantian `Petugas:` / `Peserta:`. Codebook CSV kolomnya
+`kode;kategori;tema;definisi` (tambah `pola` untuk regex bila perlu).
+
+Tabel kode yang ditempel di BAB III:
+
+| Kode | Kategori | Tema | Jumlah Kutipan | Sumber |
+|------|----------|------|----------------|--------|
+| M1 | Motivasi ekstrinsik | Motivasi kerja | 12 | `[K-1]`, `[K-3]` |
+
+> **Aturan anti-hallucination kualitatif**: kutipan verbatim harus **benar-benar ada** di
+> transkrip; jumlah kutipan dihitung dari output `code_interview.py`, bukan dikarang.
+> Penanda kutipan memakai `[K-n]`, bukan `[L-n]`. Hasil pengodean adalah **bantuan analisis**,
+> bukan temuan siap laporan — verifikasi tiap kode sebelum dipakai.
+
 ### Output Step 4
 ```
 draft_bab2.md   — kerangka BAB II (sub-bab + sintesis + penanda sumber)
-draft_bab3.md   — kerangka BAB III (desain + analisis + tabel uji)
-profil_dataset.md | .json   (bila ada dataset)
+draft_bab3.md   — kerangka BAB III (desain + analisis + tabel uji / tabel kode)
+profil_dataset.md | .json   (bila ada dataset kuantitatif)
+hasil_uji.md | .json        (bila uji statistik dijalankan)
+hasil_koding.md | .json      (bila pengodean wawancara dijalankan)
 ```
 
 ### Quality Gate 4
@@ -257,7 +359,9 @@ profil_dataset.md | .json   (bila ada dataset)
 - [ ] Instrumen dinyatakan asal butirnya (dikembangkan sendiri atau diadaptasi dari `[L-n]`)
 - [ ] **Setiap hipotesis kuantitatif punya satu teknik analisis** dan uji asumsi
 - [ ] **Semua angka dataset berasal dari `profile_dataset.py`/perhitungan nyata** (wajib, tanpa kecuali)
+- [ ] Bila uji dijalankan, angka hasil di BAB III cocok dengan `hasil_uji.md`
 - [ ] Etika penelitian dan izin penelitian sudah ada di rancangan
+- [ ] **Bila kualitatif: Gate 4-Kualitatif di `references/quality-gates.md` terpenuhi**
 
 ---
 
@@ -294,11 +398,29 @@ proposal_skripsi.md   # DOKUMEN UTAMA: halaman judul + daftar isi + BAB I + BAB 
 ### 6.1 Daftar pustaka
 
 Semua rujukan yang dikutip di teks **wajib ada** di daftar pustaka, dan sebaliknya (1:1).
-Format: APA 7 default (`references/citation-styles.md`). Aturan: 
+Format: APA 7 default, atau gaya dari preset kampus (`references/citation-styles.md`).
+Aturan:
 - artikel: `Penulis, A. A. (Tahun). Judul. *Nama Jurnal*, *vol*(no), hal. DOI`
 - buku: `Penulis, A. A. (Tahun). *Judul*. Penerbit.`
 - dokumen lokal/pedoman: `Institusi (Tahun). *Judul*.`
 - sumber dari file lokal tanpa DOI → **jangan dikarang DOI**; tulis `(dokumen lokal, namafile.pdf)`.
+
+Bila matriks referensi tersedia (CSV/JSON dari `paper-review` atau buatan sendiri),
+**jangan menulis daftar pustaka tangan** — ekspor otomatis:
+
+```bash
+# validasi dulu: baris tanpa judul & field kosong dilaporkan, tidak ditebak
+python3 scripts/export_referensi.py matriks_referensi.csv --periksa
+
+# -> referensi.bib, referensi.ris, referensi.xml (EndNote), referensi.txt
+python3 scripts/export_referensi.py matriks_referensi.csv \
+    --out-dir outputs/ --gaya apa --urutkan penulis --nomor L
+```
+
+Opsi: `--gaya apa|vancouver|ieee`, `--urutkan tahun|penulis|judul|input`,
+`--nama`, `--nomor P` untuk sumber pedoman, `--quiet`.
+Field kosong **tidak ditebak**; penomoran `[L-n]` mengikuti urutan akhir daftar pustaka,
+bukan urutan file. Alur lengkap: `references/paper-review-integration.md`.
 
 ### 6.2 Quality gate akhir (semua wajib)
 
@@ -313,19 +435,51 @@ Format: APA 7 default (`references/citation-styles.md`). Aturan:
   kalimat "yang mana" berlebihan, serta pengulangan "hasil-hasil"
 - [ ] User menyetujui draft (gate human-in-the-loop)
 
+### 6.2b Gate otomatis (WAJIB jalankan — jangan andalkan baca mata)
+
+Naskah panjang mustahil diperiksa mata. Jalankan tiga pemeriksa; kode keluar `1`
+(`--strict`) berarti **gate gagal** → perbaiki, jangan diekspor apa adanya.
+
+```bash
+# 1) gaya bahasa Indonesia + struktur BAB I
+python3 scripts/id_language_check.py outputs/proposal_skripsi.md \
+    --struktur --md outputs/idl-check.md --strict
+
+# 2) penanda menggantung, placeholder, angka tanpa sumber, daftar pustaka, sinkronisasi DOCX
+python3 scripts/proposal_doctor.py outputs/proposal_skripsi.md \
+    --dataset data/responden.csv --hasil-uji outputs/hasil_uji.json \
+    --docx outputs/proposal_skripsi.docx --json outputs/doctor.json --strict
+
+# 3) kesesuaian struktur dengan pedoman kampus
+python3 scripts/apply_campus_template.py check ugm outputs/proposal_skripsi.md --lengkap
+```
+
+| Pemeriksa | Menangkap |
+|-----------|-----------|
+| `id_language_check.py` | kata serapan asing, tanda baca/kapitalisasi, kalimat terlalu panjang, desimal & ribuan, istilah Inggris tak perlu, karakter non-Latin, penanda sumber tak terdefinisi, struktur BAB I |
+| `proposal_doctor.py` | subbab wajib BAB I–III, `[L-n]`/`[D:kolom]` menggantung, `[isi ...]` tersisa, entri daftar pustaka tak dikenal, kolom dataset yang disebut tapi tak ada, angka hard-code tanpa sumber, DOCX tidak sinkron |
+| `apply_campus_template.py check` | subbab wajib per preset kampus + penanda isi khusus (`latar_belakang`, `rumusan_masalah`, `populasi_sampel`, `uji_statistik_cocok`, dst) |
+
+Temuan kategori selain `galat` boleh tersisa **bila ada alasan naratif** yang ditulis user.
+
 ### 6.3 Export
 
 ```bash
 # DOCX (rekomendasi; butuh pandoc)
 scripts/build_docx.sh proposal_skripsi.md --out-dir . --title "Judul Proposal" --number-sections
 
+# dengan reference-doc pedoman kampus (opsional, lebih akurat daripada preset)
+scripts/build_docx.sh proposal_skripsi.md --out-dir . --ref-doc pedoman_kampus.docx --toc --clean
+
 # LaTeX (opsional)
 pandoc proposal_skripsi.md -o proposal_skripsi.tex --number-sections
-pandoc proposal_skripsi.md -o proposal_skripsi.docx --reference-doc=pedoman_kampus.docx
 ```
 
 `build_docx.sh` membuat: `.docx` (dengan daftar isi otomatis bila `--toc`), `daftar_isi.md`,
 dan `<nama>_ekstrak.md` bila dijalankan dengan `--clean` (naskah tanpa blok instruksi internal).
+
+Urutan benar: **tulis draft → gate otomatis → perbaiki → ekspor DOCX → `proposal_doctor --docx`
+untuk memastikan DOCX sinkron dengan Markdown.** Jangan ekspor dulu lalu memeriksa.
 
 ### Output Step 6
 ```
@@ -335,6 +489,8 @@ dan `<nama>_ekstrak.md` bila dijalankan dengan `--clean` (naskah tanpa blok inst
   daftar_pustaka.md            # daftar pustaka (juga sudah ada di dalam proposal)
 🗂 PENDUKUNG (bila dipakai):
   matriks_evidence.md | catatan_gap.md | sumber_inventaris.md | profil_dataset.md | draft_bab*.md
+  hasil_uji.md | hasil_koding.md | referensi.{bib,ris,xml,txt} | idl-check.md | doctor.json
+  lampiran_pedoman_wawancara.md | lampiran_informed_consent.md
 ```
 
 ---
@@ -346,10 +502,17 @@ dan `<nama>_ekstrak.md` bila dijalankan dengan `--clean` (naskah tanpa blok inst
 | "Bikin proposal skripsi dari folder [path] tentang X" | Step 0 tanyakan jenjang → 1 inventaris → 2 bukti → 3–4 formulasi → 5 draft → 6 export |
 | "Buat proposal tesis, fokus mixed-methods" | Jenjang Thesis + mode Folder+Online; wajib tulis threat to validity dan strategi generalisasi |
 | "Cuma bab 3 metode, data csv sudah ada" | Langsung Step 1 (klasifikasi) → Step 4 (`profile_dataset.py`) → tulis BAB III → export |
+| "Proposal kualitatif / analisis tematik, ada transkrip" | Step 1 (kategori transkrip) → §4.4 + `references/qualitative-analysis.md` → `code_interview.py` → Gate 4-Kualitatif |
+| "Buat pedoman wawancara + informed consent" | Salin `templates/pedoman_wawancara.md` & `templates/informed_consent.md`, sesuaikan konteks; lampirkan di proposal |
+| "Koding transkrip ini jadi tabel kode" | Susun codebook CSV (`kode;kategori;tema;definisi`) → `code_interview.py codebook …` → `report` → tempel tabel kode BAB III |
 | "Review literatur untuk latar belakang dulu" | Step 2 → bila butuh tabel penuh: **pakai skill `paper-review`** |
-| "Pakai pedoman kampus ini" | Step 0 set template path → Step 6 verifikasi struktur (daftar isi & nomor bab) |
-| "Cek ANOVA atau regresi untuk data ini" | `profile_dataset.py` → baca rekomendasi uji → Bab III tabel uji |
+| "Pakai pedoman kampus ini" | `apply_campus_template.py list` → `init <preset>` (atau file pedoman/path) → Step 6 `check` |
+| "Format skripsi UGM/UI/ITB" | Step 0 set preset → `init` → Step 6 `check <preset> naskah --lengkap` |
+| "Cek ANOVA atau regresi untuk data ini" | `profile_dataset.py` → baca rekomendasi uji → `stats_tests.py --auto` → Bab III tabel uji |
+| "Hitung uji statistiknya sekalian" | `stats_tests.py <csv> --auto` atau `--regresi/--anova/--korelasi` → salin angka dari `hasil_uji.md` |
 | "Tambah studi terdahulu 5 paper" | Step 2 matriks evidence + `[L-n]` baru; update BAB II + daftar pustaka |
+| "Ekspor referensi ke BibTeX/RIS/EndNote" | `export_referensi.py matriks.csv --out-dir outputs/ --gaya apa --periksa` dulu |
+| "Cek ejaan / periksa bahasa / cek daftar pustaka / periksa proposal" | `id_language_check.py --struktur` + `proposal_doctor.py --strict` (§6.2b) |
 | "Ekspor ke LaTeX" | `pandoc proposal.md -o proposal.tex --number-sections` (opsional) |
 
 ---
@@ -360,39 +523,89 @@ dan `<nama>_ekstrak.md` bila dijalankan dengan `--clean` (naskah tanpa blok inst
    Draft per-bab (draft_bab*.md) hanya working file internal.
 1. **Jangan mengarang data.** Angka responden, skor, mean, SD, hasil uji → dari `profile_dataset.py`
    atau file nyata; kalau belum dianalisis → tulis `(data belum dianalisis)`, bukan angka karangan.
+   Angka hasil uji → salin dari `stats_tests.py` (`hasil_uji.md`), bukan ingatan.
 2. **Jangan mengarang literatur/penulis/DOI.** Setiap `[L-n]` terverifikasi (DOI resolve atau file
-   lokal dibaca). Sumber lokal tanpa DOI → tandai `(dokumen lokal)`.
+   lokal dibaca). Sumber lokal tanpa DOI → tandai `(dokumen lokal)`. Ekspor daftar pustaka pakai
+   `export_referensi.py`; field kosong ditandai, bukan ditebak.
 3. **Jangan mengarang identitas.** NIM, fakultas, dosen, nama responden → `[isi ...]` bila tidak ada.
+   Nama peserta kualitatif selalu disamarkan (P1, peserta 3), meski ada persetujuan lisan.
 4. **Jenjang menentukan kedalaman.** S1 = penerapan; S2 = pengembangan kerangka; S3 = kontribusi
    teoretis orisinal. Jangan menulis proposal S1 yang setebal proposal S3 (atau sebaliknya).
 5. **Tujuan = 1:1 rumusan masalah.** Ini quality gate, bukan saran.
-6. **Setiap klaim empiris ber-marker sumber**: `[L-n]`, `[D:kolom]`, `[U]`, `(inferensi)`.
+6. **Setiap klaim empiris ber-marker sumber**: `[L-n]`, `[D:kolom]`, `[K-n]` (kutipan kualitatif),
+   `[U]`, `(inferensi)`.
 7. **Human-in-the-loop**: konfirmasi hanya di Step 0 & sebelum export, tidak per-bagian.
 8. **Simpan artefak sebagai file** di folder kerja user, bukan hanya di chat.
 9. **Eja Indonesia**: KBBI, kapitalisasi kalimat, istilah asing italic pada penyebutan pertama.
+   Jalankan `id_language_check.py`; ia **menandai**, perbaikan tetap oleh manusianya.
 10. **Bahasa output selalu Bahasa Indonesia**, kecuali user minta naskah inggris.
+11. **Jalankan gate otomatis sebelum ekspor** (`id_language_check.py`, `proposal_doctor.py`,
+    `apply_campus_template.py check`). Kode keluar `1` = gate gagal, jangan diabaikan.
+12. **Pedoman kampus user mengalahkan preset skill.** Preset hanya acuan; bila user punya
+    file pedoman resmi, prescribing itu yang dipakai.
+13. **Kualitatif ≠ kuantitatif tanpa angka.** Tanpa rumus probabilistik, alpha, atau tabel
+    hipotesis → uji; tapi wajib ada pedoman wawancara, informed consent, dan alasan saturasi.
+14. **Verbatim adalah data, bukan tafsir.** Kutipan tidak boleh dibuat, diringkas, atau
+    diartikan ulang; jumlah kutipan dihitung, bukan diperkirakan.
 
 ## Referensi Internal
+
+### Referensi (panduan baca)
 
 | File | Gunakan untuk |
 |------|---------------|
 | [references/data-sources.md](references/data-sources.md) | Klasifikasi & ekstraksi file lokal (PDF/DOCX/MD/CSV/XLSX/JSON) |
 | [references/problem-formulation.md](references/problem-formulation.md) | Rumusan masalah, tujuan, manfaat, gap (TAS), hipotesis, variabel, batasan |
 | [references/methodology.md](references/methodology.md) | Desain penelitian, sampling, instrumen, teknik analisis, etika, uji asumsi |
+| [references/qualitative-analysis.md](references/qualitative-analysis.md) | **Jalur kualitatif**: desain, teknik pengumpulan, tahapan pengodean, mutu, batasan |
 | [references/dataset-analysis.md](references/dataset-analysis.md) | Profil dataset & pemilihan uji statistik, cara membaca `profil_dataset.md` |
 | [references/online-search.md](references/online-search.md) | Pencarian online pelengkap (OpenAlex/Semantic Scholar) |
 | [references/document-assembly.md](references/document-assembly.md) | Gaya bahasa Indonesia, struktur BAB, kerangka berpikir, tabel dan gambar |
 | [references/citation-styles.md](references/citation-styles.md) | Format daftar pustaka (APA 7/Chicago/Harvard/Vancouver/IEEE) |
-| [references/quality-gates.md](references/quality-gates.md) | Rincian quality gate per tahap + checklist akhir |
+| [references/paper-review-integration.md](references/paper-review-integration.md) | Alih matriks `paper-review` → BAB II → ekspor sitasi |
+| [references/quality-gates.md](references/quality-gates.md) | Rincian quality gate per tahap, Gate 4-Kualitatif, checklist akhir |
+
+### Template
+
+| File | Gunakan untuk |
+|------|---------------|
 | [templates/proposal_template.md](templates/proposal_template.md) | Template dokumen proposal penuh (judul → daftar isi → BAB I–III) |
 | [templates/bab1_pendahuluan.md](templates/bab1_pendahuluan.md) | Template BAB I |
 | [templates/bab2_tinjauan_pustaka.md](templates/bab2_tinjauan_pustaka.md) | Template BAB II |
 | [templates/bab3_metode.md](templates/bab3_metode.md) | Template BAB III |
 | [templates/tabel_uji_statistik.md](templates/tabel_uji_statistik.md) | Tabel pemetaan hipotesis → uji statistik |
+| [templates/pedoman_wawancara.md](templates/pedoman_wawancara.md) | **Pedoman wawancara** untuk Lampiran (jalur kualitatif) |
+| [templates/informed_consent.md](templates/informed_consent.md) | **Lembar persetujuan** & pernyataan kerahasiaan |
+
+### Script
+
+| File | Gunakan untuk |
+|------|---------------|
 | [scripts/ingest_sources.sh](scripts/ingest_sources.sh) | Scan & ekstrak file lokal → inventaris |
 | [scripts/profile_dataset.py](scripts/profile_dataset.py) | Profil dataset CSV/XLSX/TSV/JSON + rekomendasi uji |
+| [scripts/stats_tests.py](scripts/stats_tests.py) | Uji statistik nyata → `hasil_uji.md/.json` (regresi, t-test, ANOVA, chi2, korelasi, alpha) |
+| [scripts/code_interview.py](scripts/code_interview.py) | Koding transkrip → tabel kode, frekuensi, cuplikan (`[K-n]`) |
+| [scripts/export_referensi.py](scripts/export_referensi.py) | Matriks referensi → BibTeX / RIS / EndNote XML / daftar pustaka |
+| [scripts/id_language_check.py](scripts/id_language_check.py) | Pemeriksa gaya bahasa Indonesia + struktur BAB I |
+| [scripts/proposal_doctor.py](scripts/proposal_doctor.py) | Pemeriksaan akhir naskah (penanda, placeholder, angka, sinkronisasi DOCX) |
+| [scripts/apply_campus_template.py](scripts/apply_campus_template.py) | Preset kampus: `list`/`show`/`init`/`check`/`new-custom` |
 | [scripts/build_docx.sh](scripts/build_docx.sh) | Markdown → DOCX (pandoc) + daftar isi |
+
+### Data & uji
+
+| File | Gunakan untuk |
+|------|---------------|
+| [campus_templates/generic.json](campus_templates/generic.json) | Preset generik - dipakai bila tidak ada preset kampus |
+| [campus_templates/ugm.json](campus_templates/ugm.json) | Preset Universitas Gadjah Mada |
+| [campus_templates/ui.json](campus_templates/ui.json) | Preset Universitas Indonesia |
+| [campus_templates/uny.json](campus_templates/uny.json) | Preset Universitas Negeri Yogyakarta |
+| [campus_templates/itb.json](campus_templates/itb.json) | Preset Institut Teknologi Bandung |
+| [campus_templates/custom.json](campus_templates/custom.json) | Kerangka kosong untuk diisi preset institusi lain |
+| [tests/run_tests.sh](tests/run_tests.sh) | Smoke test seluruh script (`bash tests/run_tests.sh`) |
 | [tests/sample_dataset.csv](tests/sample_dataset.csv) | Dataset contoh untuk uji script |
+| [tests/codebook_contoh.csv](tests/codebook_contoh.csv) | Contoh codebook pengodean |
+| [tests/transkrip_contoh.md](tests/transkrip_contoh.md) | Contoh transkrip untuk uji `code_interview.py` |
+| [tests/matriks_referensi_contoh.csv](tests/matriks_referensi_contoh.csv) | Contoh matriks untuk uji `export_referensi.py` |
 
 ## Integrasi Skill
 

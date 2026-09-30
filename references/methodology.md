@@ -118,6 +118,12 @@ menyebut regresi padahal variabel dependennya kategorik, atau memakai Mann-Whitn
 | Software | NVivo 14, ATLAS.ti, atau MAXQDA (bila dipakai) |
 | Kualitas data | triangulasi sumber dan metode, member checking, audit trail, refleksi peneliti |
 
+> Load `references/qualitative-analysis.md` untuk detail: pemilihan desain, etika tiap
+> teknik pengumpulan data, tahapan analisis, kriteria saturasi, dan batasan yang jujur.
+> Instrumen: `templates/pedoman_wawancara.md` + `templates/informed_consent.md`.
+> Pengodean transkrip: `scripts/code_interview.py`. Gate: Gate 4-Kualitatif di
+> `references/quality-gates.md`.
+
 ## 7. Mixed-Methods (Creswell)
 
 Isi eksplisit:

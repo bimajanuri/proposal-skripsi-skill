@@ -113,5 +113,116 @@ else
   printf '  SKIP  pandoc tidak terpasang\n'
 fi
 
+head2 "8. apply_campus_template.py"
+python3 "$S/apply_campus_template.py" list >/dev/null 2>&1 && ok "list" || bad "list"
+for preset in ugm ui uny itb generic custom; do
+  python3 -c "import json,sys;json.load(open('$ROOT/campus_templates/$preset.json'))" 2>/dev/null \
+    && ok "JSON $preset valid" || bad "JSON $preset"
+done
+python3 "$S/apply_campus_template.py" init generic -o "$TMP/krangka.md" \
+    --judul "Uji" --nama "Uji" --nim "1" --pembimbing "Uji" --tahun 2026 >/dev/null 2>&1 \
+    && [ -s "$TMP/krangka.md" ] && ok "init membuat kerangka" || bad "init"
+python3 "$S/apply_campus_template.py" check ugm "$T/contoh_proposal_lengkap.md" >/dev/null 2>&1 \
+    && ok "proposal lengkap lolos preset ugm" || bad "proposal lengkap gagal di preset ugm"
+python3 "$S/apply_campus_template.py" check ugm "$T/contoh_bab1.md" >/dev/null 2>&1 \
+    && bad "naskah cacat seharusnya gagal" || ok "naskah cacat terdeteksi"
+
+head2 "9. code_interview.py"
+python3 "$S/code_interview.py" apply "$T/codebook_contoh.csv" \
+    --transkrip "$T/transkrip_contoh.md" --out "$TMP/koding" >/dev/null 2>&1
+[ -s "$TMP/koding.md" ] && [ -s "$TMP/koding.json" ] && ok "pengodean menghasilkan md+json" || bad "pengodean"
+python3 -c "
+import json,sys
+d=json.load(open('$TMP/koding.json'))
+ada=[t['kode'] for t in d['tabel'] if t['jumlah_unit']>0]
+sys.exit(0 if len(ada)>=3 else 1)" 2>/dev/null \
+    && ok "kode aktif terdeteksi" || bad "kode aktif"
+python3 "$S/code_interview.py" report "$TMP/koding.json" --out "$TMP/koding2.md" >/dev/null 2>&1 \
+    && ok "report ulang" || bad "report"
+
+head2 "10. export_referensi.py"
+for gaya in apa vancouver ieee; do
+  python3 "$S/export_referensi.py" "$T/matriks_referensi_contoh.csv" \
+      --out-dir "$TMP/ref_$gaya" --gaya "$gaya" --quiet >/dev/null 2>&1
+  if [ -s "$TMP/ref_$gaya/referensi.bib" ] && [ -s "$TMP/ref_$gaya/referensi.ris" ] \
+     && [ -s "$TMP/ref_$gaya/referensi.xml" ] && [ -s "$TMP/ref_$gaya/referensi.txt" ]; then
+    ok "ekspor $gaya (bib/ris/xml/txt)"
+  else
+    bad "ekspor $gaya"
+  fi
+done
+python3 -c "import xml.dom.minidom;xml.dom.minidom.parse('$TMP/ref_apa/referensi.xml')" 2>/dev/null \
+    && ok "EndNote XML well-formed" || bad "EndNote XML rusak"
+python3 "$S/export_referensi.py" "$T/matriks_referensi_contoh.csv" --periksa >/dev/null 2>&1 \
+    && bad "matriks cacat seharusnya dilaporkan" || ok "periksa menandai field kosong"
+grep -q "10.1234/jmi.2020.12.3.145" "$TMP/ref_apa/referensi.bib" 2>/dev/null \
+    && ok "DOI diteruskan apa adanya" || bad "DOI hilang"
+
+head2 "11. konsistensi dokumentasi"
+# 11a. setiap path yang disebut SKILL.md/README.md harus benar-benar ada
+BROKEN="$(python3 - "$ROOT" <<'PY'
+import os, re, sys
+root = sys.argv[1]
+docs = ["SKILL.md", "README.md"] + [
+    os.path.join(root, "references", f) for f in sorted(os.listdir(os.path.join(root, "references")))
+]
+pat = re.compile(r"(?:\]\(([^)\s]+)\)|`((?:references|templates|scripts|campus_templates|tests)/[A-Za-z0-9_./-]+)`)")
+missing = []
+for d in docs:
+    p = d if os.path.isabs(d) else os.path.join(root, d)
+    if not os.path.isfile(p):
+        continue
+    for m in pat.finditer(open(p, encoding="utf-8").read()):
+        rel = (m.group(1) or m.group(2)).split("#")[0]
+        if not rel or rel.startswith(("http://", "https://", "mailto:")):
+            continue
+        if not os.path.exists(os.path.join(root, rel)):
+            missing.append(f"{os.path.relpath(p, root)} -> {rel}")
+print("\n".join(sorted(set(missing))))
+PY
+)"
+if [ -z "$BROKEN" ]; then
+  ok "semua path di SKILL.md/README.md/references resolve"
+else
+  bad "path hilang di dokumentasi:"
+  printf '        %s\n' $BROKEN
+fi
+
+# 11b. setiap script & template harus disebut minimal sekali di SKILL.md
+UNWIRED="$(python3 - "$ROOT" <<'PY'
+import os, sys
+root = sys.argv[1]
+skill = open(os.path.join(root, "SKILL.md"), encoding="utf-8").read()
+missing = []
+for sub in ("scripts", "templates", "campus_templates"):
+    d = os.path.join(root, sub)
+    for f in sorted(os.listdir(d)):
+        if f.startswith(".") or f == "__pycache__":
+            continue
+        if not os.path.isfile(os.path.join(d, f)):
+            continue
+        if f not in skill:
+            missing.append(f"{sub}/{f}")
+print("\n".join(missing))
+PY
+)"
+if [ -z "$UNWIRED" ]; then
+  ok "setiap script/template/preset disebut di SKILL.md"
+else
+  bad "tak ter-wire di SKILL.md:"
+  printf '        %s\n' $UNWIRED
+fi
+
+# 11c. tiap script .py harus punya --help yang tidak error
+HELPBAD=""
+for f in "$S"/*.py; do
+  python3 "$f" --help >/dev/null 2>&1 || HELPBAD="$HELPBAD $(basename "$f")"
+done
+if [ -z "$HELPBAD" ]; then
+  ok "semua script .py punya --help yang valid"
+else
+  bad "--help gagal:$HELPBAD"
+fi
+
 printf '\n== RINGKASAN ==\nPASS: %d  FAIL: %d  (log: %s)\n' "$PASS" "$FAIL" "$TMP"
 [ "$FAIL" -eq 0 ]
