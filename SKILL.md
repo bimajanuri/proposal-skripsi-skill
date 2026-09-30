@@ -18,9 +18,10 @@ unsur proposal punya justifikasi, dan jenjang menentukan tingkat kedalaman.
 
 > Skill ini **berkumpulan dengan** dua skill lain (bukan duplikat):
 > - **`paper-review`** → tabel review literatur (synthesis matrix) bila user butuh matriks
->   evidence lengkap per paper. Skill ini достаikan **ringkasan** matriks saja.
-> - **`academic-writing`** → protocol penulisan paper (English). **Tidak dipakai di sini**;
->   output skill ini wajib **Bahasa Indonesia**.
+>   evidence lengkap per paper. Skill ini menyediakan **ringkasan** matriks saja.
+> - **`academic-writing`** → protocol penulisan paper (English). Output skill ini wajib
+>   **Bahasa Indonesia**, bukan adaptasi langsung. Hanya *pola* Layered QC-nya yang
+>   diadaptasi ke konteks proposal: Humanizer, plagiarism check, dan gate semantik.
 
 ---
 
@@ -437,30 +438,91 @@ bukan urutan file. Alur lengkap: `references/paper-review-integration.md`.
 
 ### 6.2b Gate otomatis (WAJIB jalankan — jangan andalkan baca mata)
 
-Naskah panjang mustahil diperiksa mata. Jalankan tiga pemeriksa; kode keluar `1`
+Naskah panjang mustahil diperiksa mata. Jalankan pemeriksa berikut; kode keluar `1`
 (`--strict`) berarti **gate gagal** → perbaiki, jangan diekspor apa adanya.
 
 ```bash
-# 1) gaya bahasa Indonesia + struktur BAB I
+# 1) gaya bahasa Indonesia (baku, partikel, rumus kabur) + struktur BAB I
 python3 scripts/id_language_check.py outputs/proposal_skripsi.md \
     --struktur --md outputs/idl-check.md --strict
 
-# 2) penanda menggantung, placeholder, angka tanpa sumber, daftar pustaka, sinkronisasi DOCX
+# 2) duplikasi dalam naskah sendiri
+python3 scripts/plagiarism_check.py outputs/proposal_skripsi.md --internal --strict
+
+# 3) tumpang tindih dengan berkas sumber (L2/L3/PDF yang sudah diekstrak)
+python3 scripts/plagiarism_check.py outputs/proposal_skripsi.md \
+    --sumber .cache_ekstrak/ --md outputs/plagiarism_report.md \
+    --json outputs/plagiarism_report.json
+
+# 4) penanda menggantung, placeholder, angka tanpa sumber, daftar pustaka, sinkronisasi DOCX
 python3 scripts/proposal_doctor.py outputs/proposal_skripsi.md \
     --dataset data/responden.csv --hasil-uji outputs/hasil_uji.json \
     --docx outputs/proposal_skripsi.docx --json outputs/doctor.json --strict
 
-# 3) kesesuaian struktur dengan pedoman kampus
+# 5) kesesuaian struktur dengan pedoman kampus
 python3 scripts/apply_campus_template.py check ugm outputs/proposal_skripsi.md --lengkap
 ```
 
 | Pemeriksa | Menangkap |
 |-----------|-----------|
-| `id_language_check.py` | kata serapan asing, tanda baca/kapitalisasi, kalimat terlalu panjang, desimal & ribuan, istilah Inggris tak perlu, karakter non-Latin, penanda sumber tak terdefinisi, struktur BAB I |
+| `id_language_check.py` | kata serapan asing, kata non-baku (KBBI), partikel salah tulis, rumus kabur, tanda baca/kapitalisasi, kalimat terlalu panjang, desimal & ribuan, istilah Inggris tak perlu, karakter non-Latin, penanda sumber tak terdefinisi, struktur BAB I |
+| `plagiarism_check.py` | frasa identik ≥7 kata berurutan — duplikasi dalam naskah sendiri, dan tumpang tindih dengan berkas sumber. **Temuan adalah sinyal, bukan bukti**; setiap temuan wajib diverifikasi manual |
 | `proposal_doctor.py` | subbab wajib BAB I–III, `[L-n]`/`[D:kolom]` menggantung, `[isi ...]` tersisa, entri daftar pustaka tak dikenal, kolom dataset yang disebut tapi tak ada, angka hard-code tanpa sumber, DOCX tidak sinkron |
 | `apply_campus_template.py check` | subbab wajib per preset kampus + penanda isi khusus (`latar_belakang`, `rumusan_masalah`, `populasi_sampel`, `uji_statistik_cocok`, dst) |
 
 Temuan kategori selain `galat` boleh tersisa **bila ada alasan naratif** yang ditulis user.
+
+### 6.2c Layered QC — 4 lapis pemeriksaan (WAJIB)
+
+Gate di atas menangkap kesalahan yang **terlihat**. Empat lapis di bawah menangkap
+kesalahan yang tidak terlihat: gaya khas AI, ejaan halus, lompatan makna, dan
+naskah yang benar secara teknis tetapi lemah secara akademik.
+
+Lapis berjalan **berurutan**. Lapis yang gagal menjadi **blocker** bagi lapis
+berikutnya — pemeriksaan manual di atas kesalahan mekanis hanya membuang waktu.
+Rincian lengkap: `references/quality-gates.md` Bagian B.
+
+| Lapis | Nama | Yang diperiksa | Rujukan | Pelacak |
+|-------|------|-----------------|---------|---------|
+| 1 | Humanizer | tanda tangan khas generator; **fakta tidak boleh berubah** | `references/revision-guide.md` | `checklists/humanizer_checklist.md` |
+| 2 | Mekanis / EYD | ejaan, tanda baca, kapitalisasi, bentuk baku, duplikasi | `references/eyd-check.md` | `checklists/eyd_check.md` |
+| 3 | Semantik | konsistensi istilah, kesesuaian 1:1, klaim tanpa sumber, angka tidak konsisten | Gate 6 + Gate 4-Kualitatif | — |
+| 4 | Red-team | baca ulang sebagai pembimbing yang menolak | Bagian B.4 | rubrik kelulusan |
+
+**Lapis 1 — Humanizer.** Periksa 25 pola di `references/revision-guide.md`: kalimat
+pembuka/penutup bab generik, kalimat tesis yang mengulang judul, tanda pisah sebagai
+penghubung, "tidak hanya... tetapi juga" berulang, penegasan berlebihan, markdown
+berlebihan. **Dilarang** mengubah angka, kutipan asli, penanda `[L-n]`/`[D:kolom]`,
+rumusan masalah, tujuan, dan hipotesis.
+
+**Lapis 2 — Mekanis/EYD.** Otomatis penuh. Selain `id_language_check.py`, jalankan
+`plagiarism_check.py`. Rujukan: EYD V (Permendikbudristek 18/2022) dan KBBI. Bila
+LanguageTool `id-ID` tersedia, jalankan sebagai pelengkap dan **verifikasi manual
+setiap sarannya** — LanguageTool sering menolak kata baku.
+
+**Lapis 3 — Semantik.** Satu konsep satu istilah; rumusan masalah = tujuan =
+hipotesis = uji di BAB III; setiap klaim empiris punya marker; tidak ada inferensi
+tak bertanda; angka di BAB I, BAB III, dan abstract sama.
+
+**Lapis 4 — Red-team.** Baca proposal sebagai pembimbing yang menolak, bukan sebagai
+penulis yang membela diri. Jawab 9 pertanyaan di `references/quality-gates.md` B.4,
+tulis **satu** kelemahan paling fatal, lalu isi rubrik kelulusan:
+
+| Aspek | Bobot |
+|-------|-------|
+| Kejelasan rumusan masalah | 25 |
+| Dasar teori dan posisi gap | 20 |
+| Kesesuaian metode dan data | 20 |
+| Kualitas bahasa dan struktur | 20 |
+| Originalitas dan kebaruan | 15 |
+
+**Ambang: skor total ≥75 dan tidak ada aspek bernilai 0.** Di bawah itu, kembali ke
+tahap yang relevan — bukan mengulang Lapis 1.
+
+> Ringkasnya: **Gate per tahap** menjawab "apakah tahap ini selesai?"; **Layered QC**
+> menjawab "apakah naskah ini layak diserahkan?". Keduanya wajib, dan tidak saling
+> menggantikan.
+
 
 ### 6.3 Export
 
@@ -513,6 +575,9 @@ untuk memastikan DOCX sinkron dengan Markdown.** Jangan ekspor dulu lalu memerik
 | "Tambah studi terdahulu 5 paper" | Step 2 matriks evidence + `[L-n]` baru; update BAB II + daftar pustaka |
 | "Ekspor referensi ke BibTeX/RIS/EndNote" | `export_referensi.py matriks.csv --out-dir outputs/ --gaya apa --periksa` dulu |
 | "Cek ejaan / periksa bahasa / cek daftar pustaka / periksa proposal" | `id_language_check.py --struktur` + `proposal_doctor.py --strict` (§6.2b) |
+| "Buatkan tulisan yang tidak kayak AI" / "hilangkan ciri AI" | Lapis 1 Layered QC: `references/revision-guide.md` + `checklists/humanizer_checklist.md` (§6.2c) |
+| "Cek plagiarisme / cek similarity" | `plagiarism_check.py --internal` dan `--sumber .cache_ekstrak/` + `checklists/plagiarism_check.md` |
+| "Periksa naskah secara menyeluruh" / "simulasi ditinjau pembimbing" | Jalankan Layered QC Lapis 1–4 + rubrik kelulusan (§6.2c) |
 | "Ekspor ke LaTeX" | `pandoc proposal.md -o proposal.tex --number-sections` (opsional) |
 
 ---
@@ -547,6 +612,15 @@ untuk memastikan DOCX sinkron dengan Markdown.** Jangan ekspor dulu lalu memerik
     hipotesis → uji; tapi wajib ada pedoman wawancara, informed consent, dan alasan saturasi.
 14. **Verbatim adalah data, bukan tafsir.** Kutipan tidak boleh dibuat, diringkas, atau
     diartikan ulang; jumlah kutipan dihitung, bukan diperkirakan.
+15. **Humanizer boleh mengubah gaya, tidak boleh mengubah fakta.** Angka, kutipan asli,
+    penanda `[L-n]`/`[D:kolom]`/`[K-n]`, rumusan masalah, tujuan, dan hipotesis tetap
+    utuh setelah Lapis 1.
+16. **Temuan plagiarisme adalah sinyal, bukan bukti.** Frasa identik muncul karena istilah
+    baku dan nama instrumen, bukan otomatis plagiarisme. Yang diminta bukan "nol temuan",
+    tapi setiap temuan punya keputusan tercatat.
+17. **Naskah harus melewati Layered QC Lapis 1–4** sebelum diserahkan (§6.2c). Gate per tahap
+    yang lolos **tidak** berarti naskah layak diserahkan. Ambang rubrik: skor ≥75, tidak
+    ada aspek bernilai 0.
 
 ## Referensi Internal
 
@@ -563,7 +637,18 @@ untuk memastikan DOCX sinkron dengan Markdown.** Jangan ekspor dulu lalu memerik
 | [references/document-assembly.md](references/document-assembly.md) | Gaya bahasa Indonesia, struktur BAB, kerangka berpikir, tabel dan gambar |
 | [references/citation-styles.md](references/citation-styles.md) | Format daftar pustaka (APA 7/Chicago/Harvard/Vancouver/IEEE) |
 | [references/paper-review-integration.md](references/paper-review-integration.md) | Alih matriks `paper-review` → BAB II → ekspor sitasi |
-| [references/quality-gates.md](references/quality-gates.md) | Rincian quality gate per tahap, Gate 4-Kualitatif, checklist akhir |
+| [references/quality-gates.md](references/quality-gates.md) | Rincian quality gate per tahap, Gate 4-Kualitatif, **Layered QC Lapis 1–4**, checklist akhir |
+| [references/revision-guide.md](references/revision-guide.md) | **Humanizer**: 25 pola gaya khas AI + cara memperbaikinya tanpa mengubah fakta (Lapis 1) |
+| [references/eyd-check.md](references/eyd-check.md) | **EYD & KBBI**: ejaan, tanda baca, kapitalisasi, konjungsi, konsistensi istilah (Lapis 2) |
+| [references/plagiarism-check.md](references/plagiarism-check.md) | **Pemeriksaan plagiarisme**: 5 tipe, deteksi lokal, ambang similarity, studi kasus proposal (Lapis 2–3) |
+
+### Checklist pemeriksaan
+
+| File | Gunakan untuk |
+|------|---------------|
+| [checklists/humanizer_checklist.md](checklists/humanizer_checklist.md) | Pelacak Lapis 1: pola AI, tanda baca, kata, dan yang tidak boleh diubah |
+| [checklists/eyd_check.md](checklists/eyd_check.md) | Pelacak Lapis 2: ejaan, tanda baca, kapitalisasi, konsistensi istilah |
+| [checklists/plagiarism_check.md](checklists/plagiarism_check.md) | Pelacak Lapis 2–3: verifikasi setiap temuan, 5 tipe plagiarisme, ambang similarity |
 
 ### Template
 
@@ -586,7 +671,8 @@ untuk memastikan DOCX sinkron dengan Markdown.** Jangan ekspor dulu lalu memerik
 | [scripts/stats_tests.py](scripts/stats_tests.py) | Uji statistik nyata → `hasil_uji.md/.json` (regresi, t-test, ANOVA, chi2, korelasi, alpha) |
 | [scripts/code_interview.py](scripts/code_interview.py) | Koding transkrip → tabel kode, frekuensi, cuplikan (`[K-n]`) |
 | [scripts/export_referensi.py](scripts/export_referensi.py) | Matriks referensi → BibTeX / RIS / EndNote XML / daftar pustaka |
-| [scripts/id_language_check.py](scripts/id_language_check.py) | Pemeriksa gaya bahasa Indonesia + struktur BAB I |
+| [scripts/id_language_check.py](scripts/id_language_check.py) | Pemeriksa bahasa Indonesia (baku, partikel, rumus kabur, serapan, tanda baca) + struktur BAB I |
+| [scripts/plagiarism_check.py](scripts/plagiarism_check.py) | Deteksi tumpang tindih teks: duplikasi internal + perbandingan dengan folder sumber |
 | [scripts/proposal_doctor.py](scripts/proposal_doctor.py) | Pemeriksaan akhir naskah (penanda, placeholder, angka, sinkronisasi DOCX) |
 | [scripts/apply_campus_template.py](scripts/apply_campus_template.py) | Preset kampus: `list`/`show`/`init`/`check`/`new-custom` |
 | [scripts/build_docx.sh](scripts/build_docx.sh) | Markdown → DOCX (pandoc) + daftar isi |

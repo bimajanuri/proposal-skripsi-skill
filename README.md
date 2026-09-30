@@ -48,6 +48,22 @@ Skill ini **berkumpulan** dengan `paper-review` (tabel review literatur lengkap)
   kualitatif, `[U]` brief user, `[P-n]` pedoman, `(inferensi)` untuk penalaran agent
 - **Anti-hallucination ketat**: tidak mengarang data, kutipan, DOI, identitas, responden,
   atau hasil uji
+- **Layered QC 4 lapis** (`references/quality-gates.md` Bagian B), adaptasi dari skill
+  `academic-writing`:
+  - **Lapis 1 — Humanizer**: 25 pola gaya khas AI (kalimat pembuka/penutup generik, tanda
+    pisah sebagai penghubung, penegasan berlebihan, markdown berlebihan) dengan aturan
+    keras: **gaya boleh berubah, fakta tidak** — angka, kutipan, marker, dan rumusan masalah
+    tetap utuh
+  - **Lapis 2 — Mekanis/EYD**: ejaan, tanda baca, kapitalisasi, bentuk baku (EYD V /
+    Permendikbudristek 18/2022 + KBBI), plus deteksi duplikasi. Sepenuhnya otomatis
+  - **Lapis 3 — Semantik**: konsistensi istilah, kesesuaian 1:1
+    rumusan masalah = tujuan = hipotesis = uji, klaim tanpa sumber, angka tidak konsisten
+  - **Lapis 4 — Red-team**: baca ulang sebagai pembimbing yang menolak, 9 pertanyaan
+    pemeriksa + rubrik kelulusan (skor ≥75, tanpa aspek bernilai 0)
+- **Pemeriksa plagiarisme**: `plagiarism_check.py` mendeteksi frasa identik ≥7 kata berurutan —
+  duplikasi dalam naskah sendiri dan tumpang tindih dengan folder sumber. Menangani 5 tipe
+  plagiarisme termasuk mosaik, parafrase dangkal, dan *laundering* sitasi. Temuan adalah
+  **sinyal, bukan bukti**: yang diminta setiap temuan punya keputusan tercatat
 - **Ekspor Markdown + DOCX (pandoc)** dengan daftar isi otomatis, pemeriksaan marker, dan
   deteksi placeholder yang belum diisi
 - **Gaya bahasa Indonesia akademik**: panduan kalimat, ejaan KBBI, kapitalisasi, istilah asing
@@ -147,8 +163,17 @@ python3 scripts/export_referensi.py matriks_referensi.csv \
 
 # 7. Gate otomatis (kode keluar 1 = gagal, perbaiki dulu)
 python3 scripts/id_language_check.py proposal.md --struktur --strict
+python3 scripts/plagiarism_check.py proposal.md --internal --strict
+python3 scripts/plagiarism_check.py proposal.md --sumber .cache_ekstrak/ \
+    --md plagiarism_report.md --json plagiarism_report.json
 python3 scripts/proposal_doctor.py proposal.md \
     --dataset data/responden.csv --hasil-uji hasil_uji.json --docx proposal.docx --strict
+
+# 7b. Layered QC Lapis 1-4 (manual/agen - baca references/quality-gates.md Bagian B)
+#   Lapis 1 Humanizer  -> checklists/humanizer_checklist.md
+#   Lapis 2 Mekanis/EYD -> checklists/eyd_check.md  (sudah di atas)
+#   Lapis 3 Semantik   -> Gate 6 + Gate 4-Kualitatif
+#   Lapis 4 Red-team   -> 9 pertanyaan + rubrik (skor >=75, tanpa aspek bernilai 0)
 
 # 8. Konversi naskah ke DOCX
 scripts/build_docx.sh proposal_skripsi.md --out-dir . --title "Judul" --toc --clean
@@ -169,7 +194,14 @@ proposal-skripsi/
 │   ├── document-assembly.md             # Struktur BAB, gaya bahasa Indonesia, kerangka berpikir
 │   ├── citation-styles.md               # Daftar pustaka (APA 7/Chicago/Harvard/Vancouver/IEEE)
 │   ├── paper-review-integration.md      # Alih matriks paper-review -> BAB II -> ekspor sitasi
-│   └── quality-gates.md                 # Gate per tahap, Gate 4-Kualitatif, checklist akhir
+│   ├── quality-gates.md                 # Gate per tahap + Layered QC Lapis 1-4 + rubrik
+│   ├── revision-guide.md                # Humanizer: 25 pola gaya khas AI (Lapis 1)
+│   ├── eyd-check.md                     # EYD V + KBBI: ejaan, tanda baca, kapitalisasi
+│   └── plagiarism-check.md              # 5 tipe plagiarisme, deteksi lokal, ambang similarity
+├── checklists/
+│   ├── humanizer_checklist.md           # Pelacak Lapis 1
+│   ├── eyd_check.md                     # Pelacak Lapis 2
+│   └── plagiarism_check.md              # Pelacak Lapis 2-3
 ├── templates/
 │   ├── proposal_template.md             # Template dokumen penuh (judul -> BAB I-III)
 │   ├── bab1_pendahuluan.md
@@ -186,12 +218,13 @@ proposal-skripsi/
 │   ├── stats_tests.py                   # Uji statistik nyata -> hasil_uji.md/.json
 │   ├── code_interview.py                # Koding transkrip -> tabel kode & cuplikan
 │   ├── export_referensi.py              # Matriks -> BibTeX/RIS/EndNote XML/daftar pustaka
-│   ├── id_language_check.py             # Pemeriksa gaya bahasa Indonesia + struktur BAB I
+│   ├── id_language_check.py             # Bahasa Indonesia (baku, partikel, rumus kabur) + BAB I
+│   ├── plagiarism_check.py              # Tumpang tindih teks: internal + vs folder sumber
 │   ├── proposal_doctor.py               # Pemeriksaan akhir naskah (penanda, angka, DOCX)
 │   ├── apply_campus_template.py         # Preset kampus: list/show/init/check/new-custom
 │   └── build_docx.sh                    # Markdown -> DOCX (pandoc) + daftar isi
 ├── tests/
-│   ├── run_tests.sh                     # 42 smoke test seluruh script
+│   ├── run_tests.sh                     # 50 smoke test seluruh script
 │   ├── sample_dataset.csv
 │   ├── matriks_referensi_contoh.csv
 │   ├── codebook_contoh.csv
@@ -207,9 +240,10 @@ proposal-skripsi/
 bash tests/run_tests.sh
 ```
 
-42 smoke test: inventaris, profil dataset, nilai kritis t/chi-square/F, uji statistik,
-pemeriksa bahasa, proposal doctor, build DOCX, preset kampus, pengodean wawancara, dan
-ekspor referensi (termasuk validasi EndNote XML). Semua harus `PASS` sebelum commit.
+50 smoke test: inventaris, profil dataset, nilai kritis t/chi-square/F, uji statistik,
+pemeriksa bahasa, pemeriksa plagiarisme, proposal doctor, build DOCX, preset kampus,
+pengodean wawancara, ekspor referensi (termasuk validasi EndNote XML), dan konsistensi
+dokumentasi. Semua harus `PASS` sebelum commit.
 
 ## Prasyarat Opsional
 
@@ -249,6 +283,12 @@ Cronbach's alpha) dengan incomplete beta/gamma untuk nilai p.
 13. **Kualitatif bukan kuantitatif tanpa angka** — tanpa rumus probabilistik, alpha, atau tabel
     hipotesis -> uji; tapi wajib ada pedoman wawancara, informed consent, dan alasan saturasi.
 14. **Ejaan KBBI**, output selalu Bahasa Indonesia kecuali diminta lain.
+15. **Humanizer boleh mengubah gaya, bukan fakta** — angka, kutipan asli, marker, rumusan
+    masalah, tujuan, dan hipotesis tetap utuh setelah Lapis 1.
+16. **Temuan plagiarisme adalah sinyal, bukan bukti** — yang diminta setiap temuan punya
+    keputusan tercatat, bukan jumlah temuan nol.
+17. **Naskah wajib melewati Layered QC Lapis 1-4** sebelum diserahkan. Gate per tahap yang
+    lolos tidak berarti naskah layak diserahkan.
 
 ## Integrasi Skill
 

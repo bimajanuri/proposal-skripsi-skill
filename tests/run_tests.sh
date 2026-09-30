@@ -86,6 +86,117 @@ else
   printf '  SKIP  belum ada\n'
 fi
 
+# 5b. kategori EYD baru: baku, partikel, rumus_kabur
+cat > "$TMP/eyd_uji.md" <<'EYD'
+# BAB I PENDAHULUAN
+
+## 1.1 Latar Belakang
+
+Analisa awal menunjukkan bahwa sistim yang dipakai managier dalam managemen
+tidak memadai. Fotosintesis merupakan proses dimana tumbuhan mengubah energi
+cahaya menjadi energi kimia [L-1].
+
+Penelitian ini adalah merupakan usaha untuk dapat digunakan dalam memperbaiki
+sistem yang sudah lama tidak berjalan terhadap karyawan.
+
+## 1.2 Rumusan Masalah
+
+Bagaimana pengaruh motivasi kerja terhadap kinerja kerja? [U]
+EYD
+python3 "$S/id_language_check.py" "$TMP/eyd_uji.md" --md "$TMP/eyd_lapor.md" \
+  >/dev/null 2>&1
+for kode in baku partikel rumus_kabur; do
+  if grep -q "| $kode |" "$TMP/eyd_lapor.md" 2>/dev/null; then
+    ok "kategori EYD '$kode' terdeteksi"
+  else
+    bad "kategori EYD '$kode' tidak terdeteksi"
+  fi
+done
+
+# 5c. naskah ber-EYD harus tidak memicu kategori baru
+python3 "$S/id_language_check.py" "$T/contoh_bab1.md" --json "$TMP/eyd_bersih.json" \
+  >/dev/null 2>&1
+if python3 -c "
+import json,sys
+d=json.load(open('$TMP/eyd_bersih.json'))
+kode={t['kode'] for t in (d if isinstance(d,list) else d.get('temuan',[]))}
+sys.exit(1 if kode & {'baku','partikel','rumus_kabur'} else 0)
+" 2>/dev/null; then
+  ok "naskah contoh bebas temuan baku/partikel/rumus_kabur"
+else
+  bad "naskah contoh memicu temuan EYD baru"
+fi
+
+head2 "5d. plagiarism_check.py"
+if [ -f "$S/plagiarism_check.py" ]; then
+  # fixture: kalimat yang sama ada di naskah dan di sumber
+  mkdir -p "$TMP/pg_sumber"
+  cat > "$TMP/pg_sumber/paper1.txt" <<'SRC'
+Motivasi kerja merupakan faktor yang menentukan produktivitas kerja karyawan pada
+organisasi. Beberapa penelitian terdahulu menunjukkan bahwa motivasi kerja memiliki
+korelasi positif dengan kinerja kerja. Sugiyono (2019) menyatakan bahwa motivasi
+internal dan eksternal sama-sama berpengaruh terhadap pencapaian individu dalam
+jangka panjang pada berbagai sektor pekerjaan di Indonesia di Indonesia.
+SRC
+  cat > "$TMP/pg_naskah.md" <<'NASKAH'
+# BAB I PENDAHULUAN
+
+## 1.1 Latar Belakang
+
+Motivasi kerja merupakan faktor yang menentukan produktivitas kerja karyawan pada
+organisasi. Penelitian terdahulu menunjukkan bahwa motivate kerja berkaitan
+dengan kinerja kerja [L-1].
+
+## 1.2 Rumusan Masalah
+
+Bagaimana pengaruh motivasi kerja terhadap kinerja kerja karyawan?
+NASKAH
+
+  python3 "$S/plagiarism_check.py" "$TMP/pg_naskah.md" --sumber "$TMP/pg_sumber" \
+    >/dev/null 2>&1
+  if python3 "$S/plagiarism_check.py" "$TMP/pg_naskah.md" --sumber "$TMP/pg_sumber" \
+      --json "$TMP/pg.json" >/dev/null 2>&1 \
+      && python3 -c "
+import json,sys
+d=json.load(open('$TMP/pg.json'))
+sys.exit(0 if d['temuan'] else 1)
+" 2>/dev/null; then
+    ok "tumpang tindih dengan sumber terdeteksi"
+  else
+    bad "tumpang tindih dengan sumber tidak terdeteksi"
+  fi
+
+  python3 "$S/plagiarism_check.py" "$TMP/pg_naskah.md" --sumber "$TMP/pg_sumber" \
+    --strict >/dev/null 2>&1 \
+    && bad "--strict seharusnya kode 1 bila ada temuan" \
+    || ok "--strict keluar 1 saat ada temuan"
+
+  # naskah bersih tidak boleh ada temuan
+  python3 "$S/plagiarism_check.py" "$T/contoh_proposal_lengkap.md" --internal \
+    --json "$TMP/pg_bersih.json" >/dev/null 2>&1
+  if python3 -c "
+import json,sys
+d=json.load(open('$TMP/pg_bersih.json'))
+sys.exit(1 if d['temuan'] else 0)
+" 2>/dev/null; then
+    ok "naskah contoh bebas duplikasi internal"
+  else
+    bad "naskah contoh menghasilkan duplikasi internal"
+  fi
+
+  # laporan markdown
+  python3 "$S/plagiarism_check.py" "$TMP/pg_naskah.md" --sumber "$TMP/pg_sumber" \
+    --md "$TMP/pg_lapor.md" >/dev/null 2>&1
+  [ -s "$TMP/pg_lapor.md" ] && ok "laporan MD ditulis" || bad "laporan MD"
+
+  # wajib pilih --internal atau --sumber
+  python3 "$S/plagiarism_check.py" "$TMP/pg_naskah.md" >/dev/null 2>&1 \
+    && bad "tanpa --internal/--sumber seharusnya error" \
+    || ok "tanpa --internal/--sumber ditolak"
+else
+  printf '  SKIP  belum ada\n'
+fi
+
 head2 "6. proposal_doctor.py"
 if [ -f "$S/proposal_doctor.py" ]; then
   python3 "$S/proposal_doctor.py" "$T/contoh_proposal_lengkap.md" \
@@ -209,9 +320,50 @@ PY
 if [ -z "$UNWIRED" ]; then
   ok "setiap script/template/preset disebut di SKILL.md"
 else
-  bad "tak ter-wire di SKILL.md:"
+  bad "tidak disebut di SKILL.md:"
   printf '        %s\n' $UNWIRED
 fi
+
+# 11b2. setiap reference & checklist harus disebut minimal sekali di SKILL.md
+UNCITED="$(python3 - "$ROOT" <<'PY'
+import os, sys
+root = sys.argv[1]
+skill = open(os.path.join(root, "SKILL.md"), encoding="utf-8").read()
+missing = []
+for sub in ("references", "checklists"):
+    d = os.path.join(root, sub)
+    if not os.path.isdir(d):
+        continue
+    for f in sorted(os.listdir(d)):
+        if not f.endswith(".md"):
+            continue
+        if f not in skill:
+            missing.append(f"{sub}/{f}")
+print("\n".join(missing))
+PY
+)"
+if [ -z "$UNCITED" ]; then
+  ok "setiap reference & checklist disebut di SKILL.md"
+else
+  bad "tidak disebut di SKILL.md:"
+  printf '        %s\n' $UNCITED
+fi
+
+# 11b3. Layered QC harus punya 4 lapis + rujukan + checklist
+if grep -q "Lapis 1" "$ROOT/references/quality-gates.md" \
+   && grep -q "Lapis 2" "$ROOT/references/quality-gates.md" \
+   && grep -q "Lapis 3" "$ROOT/references/quality-gates.md" \
+   && grep -q "Lapis 4" "$ROOT/references/quality-gates.md"; then
+  ok "quality-gates.md punya Lapis 1-4"
+else
+  bad "quality-gates.md tidak punya Lapis 1-4 lengkap"
+fi
+for c in humanizer_checklist eyd_check plagiarism_check; do
+  [ -f "$ROOT/checklists/$c.md" ] \
+    && ok "checklists/$c.md ada" \
+    || bad "checklists/$c.md hilang"
+done
+
 
 # 11c. tiap script .py harus punya --help yang tidak error
 HELPBAD=""

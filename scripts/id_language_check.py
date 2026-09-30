@@ -56,6 +56,37 @@ PARA_PANJANG = 120
 KONJUNGSI = {"dan", "atau", "tetapi", "namun", "melainkan", "sedangkan", "padahal",
              "karena", "sehingga", "oleh karena itu", "sehingga", "maka"}
 
+# Kata non-baku. Rujukan: KBBI dan EYD (Permendikbudristek 18/2022).
+TIDAK_BAKU = {
+    "analisa": "analisis", "apotik": "apotek", "managemen": "manajemen",
+    "managier": "manajer", "hakekat": "hakikat", "kwality": "mutu",
+    "kwantitatif": "kuantitatif", "kwalitatif": "kualitatif", "nasehat": "nasihat",
+    "sistim": "sistem", "tehnologi": "teknologi", "ekstrimitas": "ekstremitas",
+    "komplek": "kompleks", "aktifis": "aktivis", "mempunyai": "memiliki",
+    "merubah": "mengubah", "merubahnya": "mengubahnya", "prosentase": "persentase",
+    "standarisasi": "standardisasi", "difinisi": "definisi", "kwalifikasi": "kualifikasi",
+}
+
+# Partikel dan kata tanya yang lazim ditulis salah di naskah akademik.
+PARTIKEL_TIDAK_BAKU = {
+    "dimana": "di mana", "kemana": "ke mana", "kenapa": "mengapa",
+    "gimana": "bagaimana", "dikarnakan": "karena", "guna untuk": "untuk",
+}
+
+# Rumus kabur: pengulangan makna yang tidak menambah informasi.
+RUMUS_KABUR = [
+    (r"adalah\s+merupakan", "adalah", "Rumus 'adalah merupakan' tidak menambah makna."),
+    (r"dapat\s+dipakai\s+untuk", "dipakai untuk",
+     "Gunakan 'dipakai untuk', bukan 'dapat digunakan untuk'."),
+    (r"dapat\s+digunakan\s+untuk", "digunakan untuk",
+     "Gunakan 'digunakan untuk', bukan 'dapat digunakan untuk'."),
+    (r"untuk\s+dapat", "untuk", "Hindari 'untuk dapat'; gunakan bentuk langsung."),
+    (r"sudah\s+lama", "sudah lama", "Rapis kata: 'sudah lama' satu kata."),
+    (r"tidak\s+sama", "tidak sama", "Rapis kata: 'tidak sama' satu kata."),
+    (r"adalah\s+yang", "adalah", "Hindari 'adalah yang'; gunting kata 'adalah'."),
+    (r"terhadap\s+terhadap", "terhadap", "Kata 'terhadap' ganda; salah ketik."),
+]
+
 NON_LATIN = re.compile(r"[\u0400-\u04ff\u0370-\u03ff\u4e00-\u9fff\u3040-\u30ff"
                        r"\u0600-\u06ff\uac00-\ud7af]")
 MARKER = re.compile(r"\[(L-\d+|D:[^\]]+|U|P-\d+|R-\d+|PR-\d+)\]")
@@ -76,6 +107,9 @@ KODE = {
     "struktur": "Elemen struktur proposal tidak ditemukan",
     "terminologi": "Istilah teknis perlu dicantumkan di glosarium",
     "penanda_baru": "Penanda epistemic tidak konsisten dengan konvensi skill",
+    "baku": "Kata tidak baku menurut KBBI",
+    "partikel": "Partikel atau kata tanya yang salah tulis",
+    "rumus_kabur": "Rumus kalimat kabur yang tidak menambah makna",
 }
 
 
@@ -127,6 +161,29 @@ def cek_teks(teks, path="<stdin>", max_kalimat=KALIMAT_PANJANG,
         tambah("serapan", baris_ditemukan[0],
                f"'{k}' muncul {len(baris_ditemukan)} kali (baris {', '.join(map(str, baris_ditemukan[:5]))})",
                f"Pertimbangkan padanan: {SERAPAN[k]}.")
+
+    # EYD: kata non-baku
+    for i, l in enumerate(baris, 1):
+        rendah = l.lower()
+        for salah, benar in TIDAK_BAKU.items():
+            if re.search(rf"\b{re.escape(salah)}\b", rendah):
+                tambah("baku", i, f"'{salah}' tidak baku.", f"Tulis '{benar}' (KBBI).")
+
+    # EYD: partikel dan kata tanya
+    for i, l in enumerate(baris, 1):
+        rendah = l.lower()
+        for salah, benar in PARTIKEL_TIDAK_BAKU.items():
+            if re.search(rf"\b{re.escape(salah)}\b", rendah):
+                tambah("partikel", i, f"'{salah}' tidak baku.",
+                       f"Tulis '{benar}'.")
+
+    # EYD: rumus kabur
+    for i, l in enumerate(baris, 1):
+        for pola, ganti, pesan in RUMUS_KABUR:
+            for m in re.finditer(pola, l, re.I):
+                tambah("rumus_kabur", i,
+                       f"'{m.group(0).strip()}' — {pesan}",
+                       f"Pertimbangkan '{ganti}'.")
 
     # kalimat panjang & konjungsi
     for i, l in enumerate(baris, 1):
