@@ -1,7 +1,7 @@
 ---
 name: proposal-skripsi
 description: |
-  Menyusun **proposal penelitian dalam Bahasa Indonesia** untuk **skripsi, thesis (magister), atau disertasi** — dipilih pengguna. Sumber data & bukti diambil dari **kumpulan file lokal** (PDF, DOCX, MD, TXT, CSV, XLSX, JSON) di folder yang ditunjuk, ditambah pencarian online pelengkap bila literatur lokal minim. Pipeline menghasilkan **BAB I Pendahuluan, BAB II Tinjauan Pustaka, BAB III Metode Penelitian** lengkap, plus halaman judul, kerangka berpikir, rancangan analisis statistik dari dataset, daftar isi, dan ekspor **Markdown + DOCX (pandoc)**. Trigger: "proposal skripsi", "proposal tesis", "proposal disertasi", "bikin proposal", "susun bab 1", "tulis bab 2", "bab 3 metode", "rumusan masalah", "tujuan penelitian", "manfaat penelitian", "latar belakang", "kerangka teori", "tinjauan pustaka", "landasan teori", "hipotesis", "variabel penelitian", "desain penelitian", "metode penelitian", "sampling", "teknik pengumpulan data", "instrumen", "uji statistik", "rancangan analisis", "analisis dataset", "dari folder ini", "proposal dari data csv", "research proposal", "thesis proposal", "dissertation proposal", "make a proposal from my folder", "proposal kualitatif", "pedoman wawancara", "informed consent", "coding wawancara", "analisis tematik", "studi kasus", "grounded theory", "penelitian kualitatif", "pedoman kampus", "format skripsi ugm", "format skripsi ui", "cek ejaan", "periksa bahasa", "cek daftar pustaka", "ekspor referensi", "export bibtex", "export ris", "endnote", "zotero", "revisi proposal", "periksa proposal". Mode input: Folder (wajib) / Folder+Online. Semua angka statistik wajib berasal dari file dataset nyata atau dihitung dengan `scripts/stats_tests.py`, bukan karangan. Mendukung mode kualitatif, preset template kampus (UGM, UI, Uny, ITB, generic, custom), pemeriksa Bahasa Indonesia, dan ekspor sitasi BibTeX/RIS/EndNote.
+  Menyusun **proposal penelitian dalam Bahasa Indonesia** untuk **skripsi, thesis (magister), atau disertasi** — dipilih pengguna. Sumber data & bukti diambil dari **kumpulan file lokal** (PDF, DOCX, MD, TXT, CSV, XLSX, JSON) di folder yang ditunjuk, ditambah pencarian online pelengkap bila literatur lokal minim. Pipeline menghasilkan **BAB I Pendahuluan, BAB II Tinjauan Pustaka, BAB III Metode Penelitian** lengkap, plus halaman judul, kerangka berpikir, rancangan analisis statistik dari dataset, daftar isi, dan ekspor **Markdown + DOCX (pandoc)**. Trigger: "proposal skripsi", "proposal tesis", "proposal disertasi", "bikin proposal", "susun bab 1", "tulis bab 2", "bab 3 metode", "rumusan masalah", "tujuan penelitian", "manfaat penelitian", "latar belakang", "kerangka teori", "tinjauan pustaka", "landasan teori", "hipotesis", "variabel penelitian", "desain penelitian", "metode penelitian", "sampling", "teknik pengumpulan data", "instrumen", "uji statistik", "rancangan analisis", "analisis dataset", "dari folder ini", "proposal dari data csv", "research proposal", "thesis proposal", "dissertation proposal", "make a proposal from my folder", "proposal kualitatif", "pedoman wawancara", "informed consent", "coding wawancara", "analisis tematik", "studi kasus", "grounded theory", "penelitian kualitatif", "pedoman kampus", "format skripsi ugm", "format skripsi ui", "cek ejaan", "periksa bahasa", "cek daftar pustaka", "ekspor referensi", "export bibtex", "export ris", "endnote", "zotero", "revisi proposal", "periksa proposal". Mode input: Folder (wajib) / Folder+Online. Semua angka statistik wajib berasal dari file dataset nyata atau dihitung dengan `scripts/stats_tests.py`, bukan karangan. Mendukung mode kualitatif, 28 preset template kampus (UGM, UI, Uny, ITB, IPB, UNAIR, UB, ITS, UNDIP, Unpad, Unhas, Telkom, BINUS, UMY, UII, UAD, UMS, Udinus, UMM, UMB, Gunadarma, UPN Veteran, Budi Luhur, UMN, generic, custom — tiap preset mencantumkan provenance resmi/konvensi), pemeriksa Bahasa Indonesia, dan ekspor sitasi BibTeX/RIS/EndNote.
 ---
 
 # Proposal Skripsi — Penyusun Proposal Penelitian (Bahasa Indonesia)
@@ -83,7 +83,7 @@ Kumpulkan parameter berikut (cukup seperlunya bila konteks sudah jelas dari brie
 | **Folder sumber** | path | **wajib ditanya bila tidak disebut** |
 | Mode input | Folder / Folder + Online | Folder (+Online bila literatur lokal < 10) |
 | Luas proposal | Pendahuluan saja / BAB I–II / **BAB I–III lengkap** | BAB I–III |
-| **Preset kampus** | UGM / UI / Uny / ITB / generic / custom / pakai file pedoman (path) | generic |
+| **Preset kampus** | 28 preset: UGM / UI / Uny / ITB / IPB / UNAIR / UB / ITS / UNDIP / Unpad / Unhas / Telkom / BINUS / UMY / UII / UAD / UMS / Udinus / UMM / UMB / Gunadarma / UPN Veteran Yogya / UPN Veteran Jakarta / UPN Veteran Jatim / Budi Luhur / UMN / generic / custom / pakai file pedoman (path) | generic |
 | Gaya sitasi | APA 7 / Chicago / Harvard / Vancouver / IEEE | APA 7, atau gaya dari preset kampus |
 | Instrumen kualitatif | pedoman wawancara milik sendiri / adaptasi / FGD / observasi | pedoman wawancara (Lampiran) |
 | Ekspor | MD saja / **MD + DOCX (pandoc)** / + LaTeX / + BIB-RIS-ENDNote | MD + DOCX |
@@ -101,19 +101,33 @@ kelompok/program studi. Tampilkan pilihan bila user menyebut nama kampus atau
 "format kampus":
 
 ```bash
-python3 scripts/apply_campus_template.py list
-python3 scripts/apply_campus_template.py show ugm
-python3 scripts/apply_campus_template.py init ugm --out outputs/proposal.md
+python3 scripts/apply_campus_template.py list        # + penanda [resmi] / [konvensi]
+python3 scripts/apply_campus_template.py show unpad  # tampilkan sumber angka + URL
+python3 scripts/apply_campus_template.py init unpad --out outputs/proposal.md
+python3 scripts/apply_campus_template.py check unpad outputs/proposal_skripsi.md --lengkap
 python3 scripts/apply_campus_template.py new-custom --out-dir outputs/institusi_saya.json
 ```
 
-- Preset bawaan: `ugm`, `ui`, `uny`, `itb`, `generic`, `custom`.
+- Preset bawaan (28): `ugm`, `ui`, `uny`, `itb`, `ipb`, `unair`, `ub`, `its`, `undip`,
+  `unpad`, `unhas`, `telu`, `binus`, `umy`, `uii`, `uad`, `ums`, `udinus`, `umm`,
+  `umb`, `gunadarma`, `upn_veteran`, `upnvj`, `upnv_jatim`, `budi_luhur`, `umn`,
+  `generic`, `custom`.
+- **Setiap preset wajib dibaca provenance-nya** (`show <preset>` atau field `sumber`):
+  - `pedoman-resmi` — angka format diambil dari dokumen resmi (ada `dokumen`, `url`,
+    `scope`, `tahun`). Tetap hanya berlaku untuk fakultas/tahun di `scope`.
+  - `konvensi-umum` — **belum diverifikasi**; angka hanya konvensi umum Indonesia.
+    Wajib dicocokkan manual ke pedoman resmi.
+- Preset `ugm`, `ui`, `uny`, `itb`, `generic`, `custom` belum punya field `sumber`;
+  perlakukan sebagai konvensi umum.
+- **Jangan mengarang angka preset.** Bila user punya pedoman resmi, **file/petunjuk user
+  yang menang**, bukan preset. Bila hanya sebagian angka yang cocok, perbaiki naskah/catatan,
+  bukan diam-diam menimpa preset.
 - `init` membangun **kerangka** naskah (heading + komentar penanda), bukan narasi —
   narasi tetap ditulis pada STEP 5.
-- Preset `ugm`, `ui`, `uny`, `itb` disusun dari kebiasaan umum penulisan ilmiah.
-  **Selalu cocokkan dengan pedoman resmi fakultas/program studi user** bila tersedia;
-  bila ada file pedoman di folder sumber, **file itu yang menang**, bukan preset.
 - Aturan yang tidak ada di preset tidak ditebak: script hanya melaporkan, tidak mengubah naskah.
+- Menambah/menyesuaikan preset? Edit `scripts/generate_campus_presets.py` (sumber data
+  tunggal), lalu `python3 scripts/generate_campus_presets.py`;
+  `python3 scripts/generate_campus_presets.py --check` mendeteksi drift.
 
 ---
 
@@ -674,7 +688,8 @@ untuk memastikan DOCX sinkron dengan Markdown.** Jangan ekspor dulu lalu memerik
 | [scripts/id_language_check.py](scripts/id_language_check.py) | Pemeriksa bahasa Indonesia (baku, partikel, rumus kabur, serapan, tanda baca) + struktur BAB I |
 | [scripts/plagiarism_check.py](scripts/plagiarism_check.py) | Deteksi tumpang tindih teks: duplikasi internal + perbandingan dengan folder sumber |
 | [scripts/proposal_doctor.py](scripts/proposal_doctor.py) | Pemeriksaan akhir naskah (penanda, placeholder, angka, sinkronisasi DOCX) |
-| [scripts/apply_campus_template.py](scripts/apply_campus_template.py) | Preset kampus: `list`/`show`/`init`/`check`/`new-custom` |
+| [scripts/apply_campus_template.py](scripts/apply_campus_template.py) | Preset kampus: `list`/`show`/`init`/`check`/`new-custom` (menampilkan provenance tiap preset) |
+| [scripts/generate_campus_presets.py](scripts/generate_campus_presets.py) | Generator preset kampus (provenance wajib; `--check` untuk deteksi drift) |
 | [scripts/build_docx.sh](scripts/build_docx.sh) | Markdown → DOCX (pandoc) + daftar isi |
 
 ### Data & uji
@@ -687,6 +702,28 @@ untuk memastikan DOCX sinkron dengan Markdown.** Jangan ekspor dulu lalu memerik
 | [campus_templates/uny.json](campus_templates/uny.json) | Preset Universitas Negeri Yogyakarta |
 | [campus_templates/itb.json](campus_templates/itb.json) | Preset Institut Teknologi Bandung |
 | [campus_templates/custom.json](campus_templates/custom.json) | Kerangka kosong untuk diisi preset institusi lain |
+| [campus_templates/ipb.json](campus_templates/ipb.json) | Institut Pertanian Bogor — konvensi umum |
+| [campus_templates/unair.json](campus_templates/unair.json) | Universitas Airlangga — **resmi**: Buku Panduan Skripsi & TA Fakultas Vokasi 2025 |
+| [campus_templates/ub.json](campus_templates/ub.json) | Universitas Brawijaya — **resmi**: Panduan FT-UB 2016 (mirror margin) |
+| [campus_templates/its.json](campus_templates/its.json) | Institut Teknologi Sepuluh Nopember — **resmi**: Pedoman TA FTI-ITS 2021 |
+| [campus_templates/undip.json](campus_templates/undip.json) | Universitas Diponegoro — konvensi umum |
+| [campus_templates/unpad.json](campus_templates/unpad.json) | Universitas Padjadjaran — **resmi**: Pedoman FISIP/FTIP/Farmasi Unpad |
+| [campus_templates/unhas.json](campus_templates/unhas.json) | Universitas Hasanuddin — konvensi umum |
+| [campus_templates/telu.json](campus_templates/telu.json) | Telkom University — konvensi umum |
+| [campus_templates/binus.json](campus_templates/binus.json) | BINUS University — konvensi umum |
+| [campus_templates/umy.json](campus_templates/umy.json) | Universitas Muhammadiyah Yogyakarta — konvensi umum |
+| [campus_templates/uii.json](campus_templates/uii.json) | Universitas Islam Indonesia — konvensi umum |
+| [campus_templates/uad.json](campus_templates/uad.json) | Universitas Ahmad Dahlan — konvensi umum |
+| [campus_templates/ums.json](campus_templates/ums.json) | Universitas Muhammadiyah Surakarta — konvensi umum |
+| [campus_templates/udinus.json](campus_templates/udinus.json) | Universitas Dian Nusantara — konvensi umum |
+| [campus_templates/umm.json](campus_templates/umm.json) | Universitas Muhammadiyah Malang — konvensi umum |
+| [campus_templates/umb.json](campus_templates/umb.json) | Universitas Mercu Buana — konvensi umum |
+| [campus_templates/gunadarma.json](campus_templates/gunadarma.json) | Universitas Gunadarma — konvensi umum |
+| [campus_templates/upn_veteran.json](campus_templates/upn_veteran.json) | UPN Veteran Yogyakarta — konvensi umum |
+| [campus_templates/upnvj.json](campus_templates/upnvj.json) | UPN Veteran Jakarta — konvensi umum |
+| [campus_templates/upnv_jatim.json](campus_templates/upnv_jatim.json) | UPN Veteran Jawa Timur — konvensi umum |
+| [campus_templates/budi_luhur.json](campus_templates/budi_luhur.json) | Universitas Budi Luhur — konvensi umum |
+| [campus_templates/umn.json](campus_templates/umn.json) | Universitas Methodist Nygga — konvensi umum |
 | [tests/run_tests.sh](tests/run_tests.sh) | Smoke test seluruh script (`bash tests/run_tests.sh`) |
 | [tests/sample_dataset.csv](tests/sample_dataset.csv) | Dataset contoh untuk uji script |
 | [tests/codebook_contoh.csv](tests/codebook_contoh.csv) | Contoh codebook pengodean |

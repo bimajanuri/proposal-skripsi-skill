@@ -226,10 +226,77 @@ fi
 
 head2 "8. apply_campus_template.py"
 python3 "$S/apply_campus_template.py" list >/dev/null 2>&1 && ok "list" || bad "list"
-for preset in ugm ui uny itb generic custom; do
-  python3 -c "import json,sys;json.load(open('$ROOT/campus_templates/$preset.json'))" 2>/dev/null \
-    && ok "JSON $preset valid" || bad "JSON $preset"
+
+# 8a. setiap preset harus punya JSON valid + provenance (sumber.status) yang sah
+PROV="$(python3 - "$ROOT" <<'PY'
+import json, os, sys
+root = sys.argv[1]
+d = os.path.join(root, "campus_templates")
+sah = ("pedoman-resmi", "konvensi-umum")
+wajib = ("kampus", "singkat", "jenjang", "verifikasi", "gaya_dokumen",
+         "sitasi", "kelengkapan", "struktur")
+bad = []
+n = 0
+for f in sorted(os.listdir(d)):
+    if not f.endswith(".json"):
+        continue
+    n += 1
+    p = os.path.join(d, f)
+    try:
+        isi = json.load(open(p, encoding="utf-8"))
+    except Exception as e:
+        bad.append(f"{f}: JSON rusak ({e})")
+        continue
+    hilang = [k for k in wajib if k not in isi]
+    if hilang:
+        bad.append(f"{f}: kunci hilang {hilang}")
+    s = isi.get("sumber") or {}
+    if s.get("status") not in sah:
+        bad.append(f"{f}: sumber.status tidak sah ({s.get('status')!r})")
+    elif s["status"] == "pedoman-resmi" and not s.get("url"):
+        bad.append(f"{f}: status pedoman-resmi tanpa url")
+    if not any(b.get("id") == "bab1" for b in isi.get("struktur", [])):
+        bad.append(f"{f}: struktur tanpa blok bab1")
+print(f"__N__={n}")
+print("\n".join(bad))
+PY
+)"
+NP="$(printf '%s\n' "$PROV" | sed -n 's/^__N__=//p')"
+PB="$(printf '%s\n' "$PROV" | grep -v '^__N__=' || true)"
+if [ -z "$PB" ]; then
+  ok "$NP preset punya JSON valid + sumber.status sah"
+else
+  bad "preset bermasalah:"
+  printf '        %s\n' $PB
+fi
+
+# 8b. preset berbasis pedoman resmi harus punya URL yang bisa di-take (offline: cek format)
+python3 - "$ROOT" <<'PY' && ok "URL pedoman resmi berformat http" || bad "URL pedoman resmi tidak valid"
+import json, os, sys
+root = sys.argv[1]
+d = os.path.join(root, "campus_templates")
+for f in sorted(os.listdir(d)):
+    if not f.endswith(".json"):
+        continue
+    isi = json.load(open(os.path.join(d, f), encoding="utf-8"))
+    s = isi.get("sumber") or {}
+    if s.get("status") == "pedoman-resmi":
+        u = s.get("url") or ""
+        assert u.startswith("http"), f"{f}: url bukan http"
+PY
+
+# 8c. show/init harus berfungsi pada preset sourced & preset konvensi
+for preset in unpad ipb; do
+  python3 "$S/apply_campus_template.py" show "$preset" >/dev/null 2>&1 \
+    && ok "show $preset" || bad "show $preset"
+  python3 "$S/apply_campus_template.py" show "$preset" 2>&1 | grep -q "status" \
+    && ok "show $preset menampilkan provenance" || bad "show $preset tanpa provenance"
 done
+
+# 8d. generator harus idempoten: --check tidak menemukan drift
+python3 "$S/generate_campus_presets.py" --check >/dev/null 2>&1 \
+  && ok "generate_campus_presets.py --check" || bad "generate_campus_presets.py --check"
+
 python3 "$S/apply_campus_template.py" init generic -o "$TMP/krangka.md" \
     --judul "Uji" --nama "Uji" --nim "1" --pembimbing "Uji" --tahun 2026 >/dev/null 2>&1 \
     && [ -s "$TMP/krangka.md" ] && ok "init membuat kerangka" || bad "init"

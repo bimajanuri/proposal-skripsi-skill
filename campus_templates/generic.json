@@ -222,5 +222,12 @@
       ],
       "wadah": true
     }
-  ]
+  ],
+  "sumber": {
+    "status": "konvensi-umum",
+    "dokumen": null,
+    "url": null,
+    "scope": "seluruh kampus (perlu konfirmasi)",
+    "catatan": "Preset lama, disusun dari kebiasaan umum penulisan ilmiah; belum diverifikasi ke pedoman resmi fakultas/program studi."
+  }
 }

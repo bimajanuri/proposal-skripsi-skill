@@ -59,6 +59,31 @@ def daftar_preset():
                   if f.endswith(".json"))
 
 
+def format_nilai(v):
+    """Rapi nilai preset: dict margin jadi 'atas 4 cm / bawah 3 cm / ...'."""
+    if isinstance(v, dict):
+        return " / ".join(f"{k} {val}" for k, val in v.items())
+    return str(v)
+
+
+def sumber_preset(preset):
+    """Ringkasan provenance; None bila preset lama belum punya field `sumber`."""
+    s = preset.get("sumber")
+    if not s:
+        return "tidak tercatat (preset lama — perlakukan sebagai konvensi umum)"
+    st = s.get("status")
+    label = {"pedoman-resmi": "PEDOMAN RESMI",
+             "konvensi-umum": "KONVENSI UMUM (belum diverifikasi)"}.get(st, st or "?")
+    baris = [f"status    : {label}"]
+    for kunci, nama in (("dokumen", "dokumen  "), ("scope", "cakupan  "),
+                        ("tahun", "tahun    "), ("url", "url      ")):
+        if s.get(kunci):
+            baris.append(f"{nama}: {s[kunci]}")
+    if s.get("catatan"):
+        baris.append(f"catatan   : {s['catatan']}")
+    return "\n".join("  " + b for b in baris)
+
+
 def cek_naskah(teks, preset, lengkap=False):
     """Cek subbab wajib + penanda cek khusus terhadap isi naskah."""
     findings = []
@@ -122,9 +147,9 @@ def buat_kerangka(preset, judul, nama, nim, pembimbing, tahun):
     if g:
         out += ["> **Ketentuan dokumen dari preset**", ">"]
         for k, v in g.items():
-            out.append(f"> - {k.replace('_', ' ')}: {v}")
+            out.append(f"> - {k.replace('_', ' ')}: {format_nilai(v)}")
         out.append(">")
-        out.append("> Aturan ini disusun dari kebiasaan umum. Verifikasi ke pedoman resmi kampus.")
+        out.append("> Sumber angka: " + preset.get("verifikasi", "belum dicatat."))
         out.append("")
     for bagian in preset.get("struktur", []):
         if not bagian.get("wajib", True):
@@ -178,7 +203,11 @@ def main():
     if args.perintah == "list":
         for nama in daftar_preset():
             _, isi = muat_preset(nama)
-            print(f"{nama:<10} {isi['kampus']}  (sitasi: {isi.get('sitasi') or '-'})")
+            st = (isi.get("sumber") or {}).get("status")
+            tanda = {"pedoman-resmi": " [resmi]", "konvensi-umum": " [konvensi]"}.get(st, "")
+            print(f"{nama:<14} {isi['kampus']}  (sitasi: {isi.get('sitasi') or '-'}){tanda}")
+        print("\n[resmi]    = angka format dari dokumen resmi (lihat `show <preset>` untuk sumber)")
+        print("[konvensi] = BELUM diverifikasi ke pedoman resmi; wajib dicocokkan manual")
         return 0
 
     if args.perintah == "new-custom":
@@ -197,10 +226,12 @@ def main():
     if args.perintah == "show":
         print(f"{preset['kampus']} ({preset['singkat']})")
         print(f"Sitasi   : {preset.get('sitasi') or 'belum ditentukan'}")
+        print("Sumber   :")
+        print(sumber_preset(preset))
         print(f"Verifikasi: {preset.get('verifikasi', '-')}")
         g = preset.get("gaya_dokumen", {})
         for k, v in g.items():
-            print(f"  {k.replace('_', ' '):<18}: {v}")
+            print(f"  {k.replace('_', ' '):<18}: {format_nilai(v)}")
         print("\nKelengkapan wajib:")
         for item in preset.get("kelengkapan", []):
             print(f"  - {item}")

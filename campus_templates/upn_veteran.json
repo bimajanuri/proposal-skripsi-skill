@@ -1,12 +1,19 @@
 {
-  "kampus": "Universitas Negeri Yogyakarta",
-  "singkat": "UNY",
+  "kampus": "Universitas Pembangunan Nasional Veteran Yogyakarta",
+  "singkat": "UPNV",
   "jenjang": [
     "skripsi",
     "thesis",
     "disertasi"
   ],
-  "verifikasi": "Preset ini disusun dari kebiasaan umum penulisan ilmiah. Cocokkan dengan pedoman resmi fakultas dan Program Studi UNY sebelum submit.",
+  "verifikasi": "Preset ini BELUM diverifikasi ke pedoman resmi. Angka format berasal dari konvensi umum penulisan Indonesia, bukan dari dokumen Universitas Pembangunan Nasional Veteran Yogyakarta. Selalu cocokkan dengan pedoman resmi fakultas/program studi Anda sebelum submit.",
+  "sumber": {
+    "status": "konvensi-umum",
+    "dokumen": null,
+    "url": null,
+    "scope": "seluruh kampus (perlu konfirmasi)",
+    "catatan": "Kampus Bela Negara di Yogyakarta; ambil pedoman penulisan resmi UPNV."
+  },
   "gaya_dokumen": {
     "ukuran_halaman": "A4",
     "margin": {
@@ -19,10 +26,11 @@
     "font_judul": "Times New Roman 14 pt tebal",
     "spasi": "1.5",
     "rata_kanan_kiri": "justify",
-    "penomoran_halaman": "angka arab, di tengah bawah",
+    "penomoran_halaman": "bagian awal angka romawi kecil, bagian inti angka arab, di tengah bawah",
     "nomor_bab": "BAB I, BAB II, BAB III"
   },
   "sitasi": "APA 7",
+  "daftar_pustaka": "heading \"DAFTAR PUSTAKA\" di halaman baru",
   "kelengkapan": [
     "halaman judul",
     "lembar persetujuan",
@@ -31,10 +39,8 @@
     "daftar isi",
     "daftar tabel",
     "daftar gambar",
-    "daftar tabel",
-    "daftar gambar",
-    "daftar singkatan dan istilah",
-    "inti sari",
+    "daftar singkatan",
+    "abstrak (inti sari) bahasa Indonesia",
     "abstrak bahasa Inggris",
     "BAB I Pendahuluan",
     "BAB II Tinjauan Pustaka",
@@ -49,6 +55,7 @@
       "id": "frontmatter",
       "judul": "Halaman Depan",
       "wajib": true,
+      "wadah": true,
       "subbab": [
         {
           "judul": "Halaman Judul",
@@ -67,14 +74,13 @@
         },
         {
           "judul": "Kata Pengantar",
-          "wajib": true
+          "wajib": false
         },
         {
           "judul": "Abstrak",
-          "wajib": true
+          "wajib": false
         }
-      ],
-      "wadah": true
+      ]
     },
     {
       "id": "bab1",
@@ -209,6 +215,7 @@
       "id": "backmatter",
       "judul": "Bagian Akhir",
       "wajib": true,
+      "wadah": true,
       "subbab": [
         {
           "judul": "Daftar Pustaka",
@@ -221,15 +228,7 @@
           "judul": "Lampiran",
           "wajib": true
         }
-      ],
-      "wadah": true
+      ]
     }
-  ],
-  "sumber": {
-    "status": "konvensi-umum",
-    "dokumen": null,
-    "url": null,
-    "scope": "seluruh kampus (perlu konfirmasi)",
-    "catatan": "Preset lama, disusun dari kebiasaan umum penulisan ilmiah; belum diverifikasi ke pedoman resmi fakultas/program studi."
-  }
+  ]
 }

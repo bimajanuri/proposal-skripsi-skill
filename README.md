@@ -29,9 +29,15 @@ Skill ini **berkumpulan** dengan `paper-review` (tabel review literatur lengkap)
 - **Jalur kualitatif penuh**: desain (studi kasus, fenomenologi, grounded theory, analisis
   tematik), pedoman wawancara, informed consent, pengodean transkrip menjadi tabel kode
   (`code_interview.py`), penanda kutipan `[K-n]`, dan **Gate 4-Kualitatif** tersendiri
-- **Preset template kampus**: `ugm`, `ui`, `uny`, `itb`, `generic`, `custom` — berisi gaya
-  dokumen, gaya sitasi, daftar kelengkapan, dan struktur bab; bisa `init` (kerangka naskah)
-  dan `check` (naskah vs ketentuan preset), atau `new-custom` untuk institusi lain
+- **Preset template kampus**: 28 preset — `ugm`, `ui`, `uny`, `itb`, `ipb`, `unair`, `ub`,
+  `its`, `undip`, `unpad`, `unhas`, `telu`, `binus`, `umy`, `uii`, `uad`, `ums`, `udinus`,
+  `umm`, `umb`, `gunadarma`, `upn_veteran`, `upnvj`, `upnv_jatim`, `budi_luhur`, `umn`,
+  plus `generic` dan `custom` — berisi gaya dokumen, gaya sitasi, daftar kelengkapan, dan
+  struktur bab; bisa `init` (kerangka naskah) dan `check` (naskah vs ketentuan preset),
+  atau `new-custom` untuk institusi lain
+  - **Provenance wajib dicek**: `list` menandai `[resmi]` vs `[konvensi]`, dan
+    `show <preset>` menampilkan dokumen/URL/cakupan sumber. Preset `[konvensi]`
+    **belum diverifikasi** ke pedoman resmi — wajib dicocokkan manual.
 - **Pemeriksa naskah otomatis**: `id_language_check.py` (gaya bahasa Indonesia, struktur
   BAB I) dan `proposal_doctor.py` (penanda menggantung, placeholder, angka tanpa sumber,
   daftar pustaka tak dikenal, sinkronisasi DOCX). Kode keluar `1` = gate gagal
@@ -152,8 +158,9 @@ python3 scripts/code_interview.py report hasil_koding.json
 
 # 5. Preset template kampus
 python3 scripts/apply_campus_template.py list
-python3 scripts/apply_campus_template.py init ugm --out proposal.md
-python3 scripts/apply_campus_template.py check ugm proposal.md --lengkap
+python3 scripts/apply_campus_template.py show unpad   # cek provenance (dokumen/URL/scope)
+python3 scripts/apply_campus_template.py init unpad --out proposal.md
+python3 scripts/apply_campus_template.py check unpad proposal.md --lengkap
 python3 scripts/apply_campus_template.py new-custom --out-dir institusi_saya.json
 
 # 6. Ekspor daftar pustaka -> BibTeX / RIS / EndNote XML / teks
@@ -210,8 +217,12 @@ proposal-skripsi/
 │   ├── tabel_uji_statistik.md           # Pemetaan hipotesis -> uji
 │   ├── pedoman_wawancara.md             # Instrumen wawancara (Lampiran)
 │   └── informed_consent.md              # Lembar persetujuan & kerahasiaan
-├── campus_templates/                    # Preset pedoman kampus
+├── campus_templates/                    # Preset pedoman kampus (28 JSON)
 │   ├── generic.json  ugm.json  ui.json  uny.json  itb.json  custom.json
+│   ├── ipb.json  unair.json  ub.json  its.json  undip.json  unpad.json
+│   ├── unhas.json  telu.json  binus.json  umy.json  uii.json  uad.json
+│   ├── ums.json  udinus.json  umm.json  umb.json  gunadarma.json
+│   └── upn_veteran.json  upnvj.json  upnv_jatim.json  budi_luhur.json  umn.json
 ├── scripts/
 │   ├── ingest_sources.sh                # Scan & ekstrak file lokal -> inventaris
 │   ├── profile_dataset.py               # Profil CSV/XLSX/TSV/JSON + rekomendasi uji
@@ -222,9 +233,10 @@ proposal-skripsi/
 │   ├── plagiarism_check.py              # Tumpang tindih teks: internal + vs folder sumber
 │   ├── proposal_doctor.py               # Pemeriksaan akhir naskah (penanda, angka, DOCX)
 │   ├── apply_campus_template.py         # Preset kampus: list/show/init/check/new-custom
+│   ├── generate_campus_presets.py       # Generator preset kampus (provenance wajib; --check)
 │   └── build_docx.sh                    # Markdown -> DOCX (pandoc) + daftar isi
 ├── tests/
-│   ├── run_tests.sh                     # 50 smoke test seluruh script
+│   ├── run_tests.sh                     # 60 smoke test seluruh script
 │   ├── sample_dataset.csv
 │   ├── matriks_referensi_contoh.csv
 │   ├── codebook_contoh.csv
@@ -240,10 +252,10 @@ proposal-skripsi/
 bash tests/run_tests.sh
 ```
 
-50 smoke test: inventaris, profil dataset, nilai kritis t/chi-square/F, uji statistik,
+60 smoke test: inventaris, profil dataset, nilai kritis t/chi-square/F, uji statistik,
 pemeriksa bahasa, pemeriksa plagiarisme, proposal doctor, build DOCX, preset kampus,
-pengodean wawancara, ekspor referensi (termasuk validasi EndNote XML), dan konsistensi
-dokumentasi. Semua harus `PASS` sebelum commit.
+pengodean wawancara, ekspor referensi (termasuk validasi EndNote XML), provenance
+28 preset kampus, dan konsistensi dokumentasi. Semua harus `PASS` sebelum commit.
 
 ## Prasyarat Opsional
 

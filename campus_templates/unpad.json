@@ -1,12 +1,20 @@
 {
-  "kampus": "Universitas Negeri Yogyakarta",
-  "singkat": "UNY",
+  "kampus": "Universitas Padjadjaran",
+  "singkat": "UNPAD",
   "jenjang": [
     "skripsi",
     "thesis",
     "disertasi"
   ],
-  "verifikasi": "Preset ini disusun dari kebiasaan umum penulisan ilmiah. Cocokkan dengan pedoman resmi fakultas dan Program Studi UNY sebelum submit.",
+  "verifikasi": "Angka format diambil dari Pedoman Penyusunan dan Penulisan Skripsi (FISIP / FTIP / Fakultas Farmasi) (Fakultas FISIP, FTIP, dan Farmasi, Universitas Padjadjaran). Pedoman ini berlaku untuk fakultas/program studi tersebut; fakultas lain di Universitas Padjadjaran dapat berbeda. Cocokkan dengan pedoman unit Anda sebelum submit.",
+  "sumber": {
+    "status": "pedoman-resmi",
+    "dokumen": "Pedoman Penyusunan dan Penulisan Skripsi (FISIP / FTIP / Fakultas Farmasi)",
+    "url": "https://ipol.fisip.unpad.ac.id/wp-content/uploads/2023/03/Pedoman-Skripsi.pdf",
+    "scope": "Fakultas FISIP, FTIP, dan Farmasi, Universitas Padjadjaran",
+    "tahun": 2023,
+    "catatan": "Ketiga fakultas tersebut konsisten: margin 4/4/3/3 cm, TNR 12, spasi 2. Fakultas lain Unpad dapat berbeda."
+  },
   "gaya_dokumen": {
     "ukuran_halaman": "A4",
     "margin": {
@@ -17,12 +25,14 @@
     },
     "font_isi": "Times New Roman 12 pt",
     "font_judul": "Times New Roman 14 pt tebal",
-    "spasi": "1.5",
+    "spasi": "2",
     "rata_kanan_kiri": "justify",
-    "penomoran_halaman": "angka arab, di tengah bawah",
-    "nomor_bab": "BAB I, BAB II, BAB III"
+    "penomoran_halaman": "bagian awal romawi kecil di luar atas; bagian inti/akhir arab",
+    "nomor_bab": "BAB I, BAB II, BAB III",
+    "catatan_tambahan": "Abstrak, judul tabel/gambar, dan daftar pustaka 1 spasi. Judul bab 14 pt tebal."
   },
   "sitasi": "APA 7",
+  "daftar_pustaka": "heading \"DAFTAR PUSTAKA\" di halaman baru",
   "kelengkapan": [
     "halaman judul",
     "lembar persetujuan",
@@ -31,10 +41,8 @@
     "daftar isi",
     "daftar tabel",
     "daftar gambar",
-    "daftar tabel",
-    "daftar gambar",
-    "daftar singkatan dan istilah",
-    "inti sari",
+    "daftar singkatan",
+    "abstrak (inti sari) bahasa Indonesia",
     "abstrak bahasa Inggris",
     "BAB I Pendahuluan",
     "BAB II Tinjauan Pustaka",
@@ -49,6 +57,7 @@
       "id": "frontmatter",
       "judul": "Halaman Depan",
       "wajib": true,
+      "wadah": true,
       "subbab": [
         {
           "judul": "Halaman Judul",
@@ -67,14 +76,13 @@
         },
         {
           "judul": "Kata Pengantar",
-          "wajib": true
+          "wajib": false
         },
         {
           "judul": "Abstrak",
-          "wajib": true
+          "wajib": false
         }
-      ],
-      "wadah": true
+      ]
     },
     {
       "id": "bab1",
@@ -209,6 +217,7 @@
       "id": "backmatter",
       "judul": "Bagian Akhir",
       "wajib": true,
+      "wadah": true,
       "subbab": [
         {
           "judul": "Daftar Pustaka",
@@ -221,15 +230,7 @@
           "judul": "Lampiran",
           "wajib": true
         }
-      ],
-      "wadah": true
+      ]
     }
-  ],
-  "sumber": {
-    "status": "konvensi-umum",
-    "dokumen": null,
-    "url": null,
-    "scope": "seluruh kampus (perlu konfirmasi)",
-    "catatan": "Preset lama, disusun dari kebiasaan umum penulisan ilmiah; belum diverifikasi ke pedoman resmi fakultas/program studi."
-  }
+  ]
 }
