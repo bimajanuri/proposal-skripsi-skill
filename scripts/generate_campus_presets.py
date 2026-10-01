@@ -474,9 +474,17 @@ daftarkan(
 )
 
 # ── 9. BINUS ─────────────────────────────────────────────────────────────────
-daftarkan("binus", konvensi(
-    "binus", "BINUS University", "BINUS",
-    "Ambil Pedoman Penulisan Skripsi/Thesis BINUS resmi; sitasi BINUS umumnya APA."))
+daftarkan(
+    "binus",
+    konvensi(
+        "binus",
+        "BINUS University",
+        "BINUS",
+        "BINUS tidak menyediakan satu link PDF publik yang konsisten untuk seluruh "
+        "program studi. Preset ini dicatat sebagai konvensi umum (TNR 12, spasi 1.5–2.0, "
+        "margin 4/4/3/3) — WAJIB cek pedoman resmi prodi Anda sebelum digunakan.",
+    ),
+)
 
 # ── 10. UMY ─────────────────────────────────────────────────────────────────
 daftarkan(
