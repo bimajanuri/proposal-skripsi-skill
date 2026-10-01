@@ -605,9 +605,31 @@ daftarkan("udinus", konvensi(
     "Ambil Panduan Penulisan Skripsi resmi Udinus."))
 
 # ── 15. UMM ──────────────────────────────────────────────────────────────────
-daftarkan("umm", konvensi(
-    "umm", "Universitas Muhammadiyah Malang", "UMM",
-    "Ambil Pedoman Penulisan Skripsi resmi UMM."))
+daftarkan(
+    "umm",
+    resmi(
+        "umm",
+        "Universitas Muhammadiyah Malang",
+        "UMM",
+        "Pedoman Penulisan Tugas Akhir Fakultas Psikologi Universitas Muhammadiyah "
+        "Malang (Edisi 2023)",
+        "https://tp.umm.ac.id/wp-content/uploads/2024/12/PEDOMAN-Tugas-Akhir-SEP-2023.pdf",
+        "Fakultas Psikologi UMM (2023)",
+        2023,
+        "Pedoman FPP UMM 2023: TNR 12, spasi 1.5 (umum), abstrak/daftar pustaka 1 spasi, "
+        "penomoran bab angka Arab (1,2,3), halaman awal romawi kecil di tengah bawah, "
+        "bagian inti angka Arab kanan atas (kecuali awal bab tengah bawah). Margin "
+        "atas 4 cm, bawah 3 cm, kiri 4 cm, kanan 3 cm.",
+        gaya(
+            margin={"atas": "4 cm", "bawah": "3 cm", "kiri": "4 cm", "kanan": "3 cm"},
+            spasi="1.5",
+            penomoran="bagian awal angka romawi kecil; bagian isi angka Arab",
+            align="Abstrak, daftar isi/tabel/gambar/lampiran, isi tabel, keterangan tabel/gambar, "
+                  "dan daftar pustaka 1 spasi. Paragraf baru 3 spasi (menurut pedoman). "
+                  "Hanging indent daftar pustaka, minimal 25 pustaka (80% jurnal).",
+        ),
+    ),
+)
 
 # ── 16. UMB ──────────────────────────────────────────────────────────────────
 daftarkan("umb", konvensi(
