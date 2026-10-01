@@ -38,9 +38,9 @@ Skill ini **berkumpulan** dengan `paper-review` (tabel review literatur lengkap)
   atau `new-custom` untuk institusi lain
   - **Provenance wajib dicek**: `list` menandai `[resmi]` vs `[konvensi]`, dan
     `show <preset>` menampilkan dokumen/URL/cakupan sumber. Preset `[konvensi]`
-    **belum diverifikasi** — wajib dicocokkan manual. Saat ini **16 `[resmi]`**
+    **belum diverifikasi** — wajib dicocokkan manual. Saat ini **17 `[resmi]`**
     (`ipb`, `itb`, `its`, `telu`, `uad`, `ub`, `ugm`, `ui`, `uii`, `umn`, `ums`,
-    `umy`, `unair`, `undip`, `unhas`, `unpad`) dan **12 `[konvensi]`**; tiap
+    `umy`, `unair`, `undip`, `unhas`, `unpad`) dan **11 `[konvensi]`**; tiap
     `[resmi]` hanya berlaku untuk fakultas/tahun di `scope`.
   - **Nilai yang belum terverifikasi ditulis apa adanya**: bila dokumen resmi
     tidak mencantumkan angka margin/spasi, preset mengisi
