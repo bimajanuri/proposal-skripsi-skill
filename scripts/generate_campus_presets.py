@@ -632,9 +632,31 @@ daftarkan(
 )
 
 # ── 16. UMB ──────────────────────────────────────────────────────────────────
-daftarkan("umb", konvensi(
-    "umb", "Universitas Mercu Buana", "UMB",
-    "Ambil Panduan Penulisan Skripsi resmi UMB."))
+daftarkan(
+    "umb",
+    resmi(
+        "umb",
+        "Universitas Mercu Buana",
+        "UMB",
+        "Pedoman Penulisan Karya Ilmiah Skripsi Program Studi Manajemen, Fakultas "
+        "Ekonomi Universitas Mercu Buana Yogyakarta",
+        "https://fe.mercubuana-yogya.ac.id/storage/uploads/2024/05/panduan-skripsi.pdf",
+        "Fakultas Ekonomi UMB Yogyakarta (2023/2024)",
+        2024,
+        "Pedoman dari UMB Yogyakarta (FE Manajemen). Kampus UMB Jakarta berbeda; "
+        "preset ini berlaku untuk FE UMB Yogyakarta. Margin kiri dan atas 4 cm, kanan "
+        "dan bawah 3 cm. Spasi 2, TNR 12, justify.",
+        gaya(
+            margin={"atas": "4 cm", "bawah": "3 cm", "kiri": "4 cm", "kanan": "3 cm"},
+            spasi="2",
+            penomoran="halaman awal angka Romawi (i, ii, iii...) di bawah tengah; "
+                       "halaman utama angka Arab (1,2,3...) kanan atas, kecuali halaman bab "
+                       "baru di bawah tengah",
+            align="Abstrak 1 spasi, daftar pustaka 1 spasi antar baris dengan hanging "
+                  "indent 6 ketukan, tabel isi 1 spasi. TNR 12.",
+        ),
+    ),
+)
 
 # ── 17. Gunadarma ────────────────────────────────────────────────────────────
 daftarkan("gunadarma", konvensi(

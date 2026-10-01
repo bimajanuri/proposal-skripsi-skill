@@ -6,13 +6,14 @@
     "thesis",
     "disertasi"
   ],
-  "verifikasi": "Preset ini BELUM diverifikasi ke pedoman resmi. Angka format berasal dari konvensi umum penulisan Indonesia, bukan dari dokumen Universitas Mercu Buana. Selalu cocokkan dengan pedoman resmi fakultas/program studi Anda sebelum submit.",
+  "verifikasi": "Angka format diambil dari Pedoman Penulisan Karya Ilmiah Skripsi Program Studi Manajemen, Fakultas Ekonomi Universitas Mercu Buana Yogyakarta (Fakultas Ekonomi UMB Yogyakarta (2023/2024)). Pedoman ini berlaku untuk fakultas/program studi tersebut; fakultas lain di Universitas Mercu Buana dapat berbeda. Cocokkan dengan pedoman unit Anda sebelum submit.",
   "sumber": {
-    "status": "konvensi-umum",
-    "dokumen": null,
-    "url": null,
-    "scope": "seluruh kampus (perlu konfirmasi)",
-    "catatan": "Ambil Panduan Penulisan Skripsi resmi UMB."
+    "status": "pedoman-resmi",
+    "dokumen": "Pedoman Penulisan Karya Ilmiah Skripsi Program Studi Manajemen, Fakultas Ekonomi Universitas Mercu Buana Yogyakarta",
+    "url": "https://fe.mercubuana-yogya.ac.id/storage/uploads/2024/05/panduan-skripsi.pdf",
+    "scope": "Fakultas Ekonomi UMB Yogyakarta (2023/2024)",
+    "tahun": 2024,
+    "catatan": "Pedoman dari UMB Yogyakarta (FE Manajemen). Kampus UMB Jakarta berbeda; preset ini berlaku untuk FE UMB Yogyakarta. Margin kiri dan atas 4 cm, kanan dan bawah 3 cm. Spasi 2, TNR 12, justify."
   },
   "gaya_dokumen": {
     "ukuran_halaman": "A4",
@@ -24,10 +25,11 @@
     },
     "font_isi": "Times New Roman 12 pt",
     "font_judul": "Times New Roman 14 pt tebal",
-    "spasi": "1.5",
+    "spasi": "2",
     "rata_kanan_kiri": "justify",
-    "penomoran_halaman": "bagian awal angka romawi kecil, bagian inti angka arab, di tengah bawah",
-    "nomor_bab": "BAB I, BAB II, BAB III"
+    "penomoran_halaman": "halaman awal angka Romawi (i, ii, iii...) di bawah tengah; halaman utama angka Arab (1,2,3...) kanan atas, kecuali halaman bab baru di bawah tengah",
+    "nomor_bab": "BAB I, BAB II, BAB III",
+    "catatan_tambahan": "Abstrak 1 spasi, daftar pustaka 1 spasi antar baris dengan hanging indent 6 ketukan, tabel isi 1 spasi. TNR 12."
   },
   "sitasi": "APA 7",
   "daftar_pustaka": "heading \"DAFTAR PUSTAKA\" di halaman baru",
