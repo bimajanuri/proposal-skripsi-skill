@@ -6,18 +6,19 @@
     "thesis",
     "disertasi"
   ],
-  "verifikasi": "Preset ini BELUM diverifikasi ke pedoman resmi. Angka format berasal dari konvensi umum penulisan Indonesia, bukan dari dokumen Universitas Islam Indonesia. Selalu cocokkan dengan pedoman resmi fakultas/program studi Anda sebelum submit.",
+  "verifikasi": "Angka format diambil dari Panduan Penulisan Tugas Akhir Fakultas Ilmu Farmasi dan Ilmu Gizi, Universitas Islam Indonesia (TA 2017 Rev 1) (Fakultas Ilmu Farmasi dan Ilmu Gizi UII (pedoman 2017 Rev 1)). Pedoman ini berlaku untuk fakultas/program studi tersebut; fakultas lain di Universitas Islam Indonesia dapat berbeda. Cocokkan dengan pedoman unit Anda sebelum submit.",
   "sumber": {
-    "status": "konvensi-umum",
-    "dokumen": null,
-    "url": null,
-    "scope": "seluruh kampus (perlu konfirmasi)",
-    "catatan": "Ambil Pedoman Penulisan Skripsi resmi UII; perhatikan aturan bahasa Arab/Inggris bila relevan."
+    "status": "pedoman-resmi",
+    "dokumen": "Panduan Penulisan Tugas Akhir Fakultas Ilmu Farmasi dan Ilmu Gizi, Universitas Islam Indonesia (TA 2017 Rev 1)",
+    "url": "https://science.uii.ac.id/wp-content/uploads/panduan-TA-2017-Rev1-Fix-Farmasi.pdf",
+    "scope": "Fakultas Ilmu Farmasi dan Ilmu Gizi UII (pedoman 2017 Rev 1)",
+    "tahun": 2017,
+    "catatan": "Struktur halaman UII mengikuti pedoman UI 2017. Dokumen aslinya memakai margin atas 4 cm pada halaman pengesahan, sedangkan naskah badan memakai 3 cm; perbedaan itu memang ada di dalam pedoman."
   },
   "gaya_dokumen": {
     "ukuran_halaman": "A4",
     "margin": {
-      "atas": "4 cm",
+      "atas": "3 cm (naskah badan); 4 cm pada halaman pengesahan",
       "bawah": "3 cm",
       "kiri": "4 cm",
       "kanan": "3 cm"
@@ -26,8 +27,9 @@
     "font_judul": "Times New Roman 14 pt tebal",
     "spasi": "1.5",
     "rata_kanan_kiri": "justify",
-    "penomoran_halaman": "bagian awal angka romawi kecil, bagian inti angka arab, di tengah bawah",
-    "nomor_bab": "BAB I, BAB II, BAB III"
+    "penomoran_halaman": "bagian awal angka romawi kecil; bagian isi angka Arab",
+    "nomor_bab": "BAB I, BAB II, BAB III",
+    "catatan_tambahan": "Keterangan tabel dan gambar memakai TNR 10. 1 spasi untuk intisari, abstract, daftar pustaka, isi tabel, serta judul tabel atau gambar lebih dari satu baris. Alinea baru mulai setelah ketukan ke-6 dari tepi kiri. Ada panduan khusus penulisan bahasa Arab."
   },
   "sitasi": "APA 7",
   "daftar_pustaka": "heading \"DAFTAR PUSTAKA\" di halaman baru",

@@ -6,28 +6,30 @@
     "thesis",
     "disertasi"
   ],
-  "verifikasi": "Preset ini BELUM diverifikasi ke pedoman resmi. Angka format berasal dari konvensi umum penulisan Indonesia, bukan dari dokumen Universitas Muhammadiyah Yogyakarta. Selalu cocokkan dengan pedoman resmi fakultas/program studi Anda sebelum submit.",
+  "verifikasi": "Angka format diambil dari Pedoman Penulisan Usulan Penelitian, Skripsi dan Publikasi Karya Ilmiah, Fakultas Ekonomi dan Bisnis UMY (berdasar Keputusan Rektor UMY No. 217/SK-UMY/X/2017) (Fakultas Ekonomi dan Bisnis UMY, mengacu pada SK Rektor UMY 217/SK-UMY/X/2017). Pedoman ini berlaku untuk fakultas/program studi tersebut; fakultas lain di Universitas Muhammadiyah Yogyakarta dapat berbeda. Cocokkan dengan pedoman unit Anda sebelum submit.",
   "sumber": {
-    "status": "konvensi-umum",
-    "dokumen": null,
-    "url": null,
-    "scope": "seluruh kampus (perlu konfirmasi)",
-    "catatan": "Ambil Pedoman Penulisan Skripsi resmi UMY."
+    "status": "pedoman-resmi",
+    "dokumen": "Pedoman Penulisan Usulan Penelitian, Skripsi dan Publikasi Karya Ilmiah, Fakultas Ekonomi dan Bisnis UMY (berdasar Keputusan Rektor UMY No. 217/SK-UMY/X/2017)",
+    "url": "https://ipief.umy.ac.id/wp-content/uploads/2020/10/PEDOMAN_PENULISAN_USULAN_PENELITIAN.pdf",
+    "scope": "Fakultas Ekonomi dan Bisnis UMY, mengacu pada SK Rektor UMY 217/SK-UMY/X/2017",
+    "tahun": 2017,
+    "catatan": "Buku panduan ini diterbitkan FEB UMY tetapi merujuk peraturan rektor UMY tingkat universitas. ANGKA MARGIN tidak tercantum pada halaman rujukan - wajib periksa bagian batas pengetikan pada pedoman asli."
   },
   "gaya_dokumen": {
     "ukuran_halaman": "A4",
     "margin": {
-      "atas": "4 cm",
-      "bawah": "3 cm",
-      "kiri": "4 cm",
-      "kanan": "3 cm"
+      "atas": "perlu konfirmasi (pedoman FEB UMY)",
+      "bawah": "perlu konfirmasi",
+      "kiri": "perlu konfirmasi",
+      "kanan": "perlu konfirmasi"
     },
     "font_isi": "Times New Roman 12 pt",
     "font_judul": "Times New Roman 14 pt tebal",
-    "spasi": "1.5",
+    "spasi": "2",
     "rata_kanan_kiri": "justify",
-    "penomoran_halaman": "bagian awal angka romawi kecil, bagian inti angka arab, di tengah bawah",
-    "nomor_bab": "BAB I, BAB II, BAB III"
+    "penomoran_halaman": "bagian awal angka romawi kecil; bagian isi angka Arab",
+    "nomor_bab": "BAB I, BAB II, BAB III",
+    "catatan_tambahan": "1 spasi untuk intisari, kutipan langsung, judul tabel dan gambar lebih dari satu baris, serta daftar pustaka. Daftar pustaka memakai hanging indent 7 karakter dengan jarak antar sumber 2 spasi. Deteksi plagiasi mengikuti bab V SK Rektor UMY."
   },
   "sitasi": "APA 7",
   "daftar_pustaka": "heading \"DAFTAR PUSTAKA\" di halaman baru",

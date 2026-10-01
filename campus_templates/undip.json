@@ -6,18 +6,19 @@
     "thesis",
     "disertasi"
   ],
-  "verifikasi": "Preset ini BELUM diverifikasi ke pedoman resmi. Angka format berasal dari konvensi umum penulisan Indonesia, bukan dari dokumen Universitas Diponegoro. Selalu cocokkan dengan pedoman resmi fakultas/program studi Anda sebelum submit.",
+  "verifikasi": "Angka format diambil dari Buku Saku Pedoman Penulisan Skripsi Fakultas Perikanan dan Ilmu Kelautan (FPIK) UNDIP (FPIK UNDIP (edisi 2021); dikonfirmasi pula oleh FPP UNDIP). Pedoman ini berlaku untuk fakultas/program studi tersebut; fakultas lain di Universitas Diponegoro dapat berbeda. Cocokkan dengan pedoman unit Anda sebelum submit.",
   "sumber": {
-    "status": "konvensi-umum",
-    "dokumen": null,
-    "url": null,
-    "scope": "seluruh kampus (perlu konfirmasi)",
-    "catatan": "Fakultas FISIP UNDIP menerbitkan Guidance for Thesis and Dissertation Writing; ambil angka format dari pedoman fakultas Anda."
+    "status": "pedoman-resmi",
+    "dokumen": "Buku Saku Pedoman Penulisan Skripsi Fakultas Perikanan dan Ilmu Kelautan (FPIK) UNDIP",
+    "url": "https://dpt.undip.ac.id/wp-content/uploads/2022/11/Buku-Saku-Pedoman-Skripsi-FPIK-2021.pdf",
+    "scope": "FPIK UNDIP (edisi 2021); dikonfirmasi pula oleh FPP UNDIP",
+    "tahun": 2021,
+    "catatan": "CATATAN PENTING: FPIK UNDIP memberi NOMOR BAB dengan ANGKA ARAB (1, 2, 3), berbeda dari UGM, UI, dan UMY yang memakai angka Romawi. Margin atas 3 cm, bukan 4 cm."
   },
   "gaya_dokumen": {
     "ukuran_halaman": "A4",
     "margin": {
-      "atas": "4 cm",
+      "atas": "3 cm",
       "bawah": "3 cm",
       "kiri": "4 cm",
       "kanan": "3 cm"
@@ -26,8 +27,9 @@
     "font_judul": "Times New Roman 14 pt tebal",
     "spasi": "1.5",
     "rata_kanan_kiri": "justify",
-    "penomoran_halaman": "bagian awal angka romawi kecil, bagian inti angka arab, di tengah bawah",
-    "nomor_bab": "BAB I, BAB II, BAB III"
+    "penomoran_halaman": "nomor bab memakai ANGKA ARAB; nomor halaman 2 cm dari tepi kanan",
+    "nomor_bab": "BAB I, BAB II, BAB III",
+    "catatan_tambahan": "1 spasi untuk abstrak, daftar isi/tabel/gambar/lampiran, isi tabel, dan daftar pustaka. Judul bab dan subbab bold kapital. Alinea baru 1,25 cm (1 tab)."
   },
   "sitasi": "APA 7",
   "daftar_pustaka": "heading \"DAFTAR PUSTAKA\" di halaman baru",
@@ -48,7 +50,9 @@
     "BAB IV Hasil dan Pembahasan",
     "BAB V Kesimpulan dan Saran",
     "daftar pustaka",
-    "lampiran (instrumen, data, izin penelitian)"
+    "lampiran (instrumen, data, izin penelitian)",
+    "pernyataan orisinalitas",
+    "halaman tim penguji"
   ],
   "struktur": [
     {

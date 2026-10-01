@@ -117,7 +117,7 @@ python3 scripts/apply_campus_template.py new-custom --out-dir outputs/institusi_
     `scope`, `tahun`). Tetap hanya berlaku untuk fakultas/tahun di `scope`.
     Saat ini 5 preset: `its`, `ub`, `umn`, `unair`, `unpad`.
   - `konvensi-umum` — **belum diverifikasi**; angka hanya konvensi umum Indonesia.
-    Wajib dicocokkan manual ke pedoman resmi. Saat ini 23 preset.
+    Wajib dicocokkan manual ke pedoman resmi. Saat ini 12 preset.
 - Preset `ugm`, `ui`, `uny`, `itb`, `generic`, `custom` belum punya field `sumber`;
   perlakukan sebagai konvensi umum.
 - **Jangan mengarang angka preset.** Bila user punya pedoman resmi, **file/petunjuk user
@@ -128,7 +128,18 @@ python3 scripts/apply_campus_template.py new-custom --out-dir outputs/institusi_
 - Aturan yang tidak ada di preset tidak ditebak: script hanya melaporkan, tidak mengubah naskah.
 - Menambah/menyesuaikan preset? Edit `scripts/generate_campus_presets.py` (sumber data
   tunggal), lalu `python3 scripts/generate_campus_presets.py`;
-  `python3 scripts/generate_campus_presets.py --check` mendeteksi drift.
+  `python3 scripts/generate_campus_presets.py --check` mendeteksi **drift** (bandingkan isi
+  disk vs hasil generator, keluar kode 1 bila tidak sinkron).
+- Preset lama `ugm`/`ui`/`itb`/`uny` TIDAK ditulis ulang generator — `struktur`-nya hasil
+  tulisan tangan. Untuk memperbarui gaya/provenance-nya pakai
+  `python3 scripts/generate_campus_presets.py --patch`, yang hanya merge field
+  `gaya_dokumen`/`sitasi`/`kelengkapan`/`sumber`/`verifikasi` dan tidak pernah menyentuh
+  `struktur` (dijalankan otomatis oleh `tests/run_tests.sh` untuk membuktikan idempotensi).
+- **Nilai tak terverifikasi ditulis apa adanya.** Bila dokumen resmi tidak mencantumkan
+  angka margin/spasi, tulis `"perlu konfirmasi (bagian X)"` — jangan menebak angka.
+- **Bedakan antar fakultas.** Bila satu kampus punya >1 pedoman berbeda (mis. UGM FKH
+  spasi 2 vs DTSL Teknik 1,15), pilih satu sebagai nilai dasar, lalu catat selisihnya di
+  `sumber.catatan` dan `verifikasi`.
 
 ---
 
@@ -690,7 +701,7 @@ untuk memastikan DOCX sinkron dengan Markdown.** Jangan ekspor dulu lalu memerik
 | [scripts/plagiarism_check.py](scripts/plagiarism_check.py) | Deteksi tumpang tindih teks: duplikasi internal + perbandingan dengan folder sumber |
 | [scripts/proposal_doctor.py](scripts/proposal_doctor.py) | Pemeriksaan akhir naskah (penanda, placeholder, angka, sinkronisasi DOCX) |
 | [scripts/apply_campus_template.py](scripts/apply_campus_template.py) | Preset kampus: `list`/`show`/`init`/`check`/`new-custom` (menampilkan provenance tiap preset) |
-| [scripts/generate_campus_presets.py](scripts/generate_campus_presets.py) | Generator preset kampus (provenance wajib; `--check` untuk deteksi drift) |
+| [scripts/generate_campus_presets.py](scripts/generate_campus_presets.py) | Generator preset kampus (provenance wajib; `--check` deteksi drift, `--patch` merge gaya ke preset lama tanpa menimpa struktur) |
 | [scripts/build_docx.sh](scripts/build_docx.sh) | Markdown → DOCX (pandoc) + daftar isi |
 
 ### Data & uji
@@ -698,24 +709,24 @@ untuk memastikan DOCX sinkron dengan Markdown.** Jangan ekspor dulu lalu memerik
 | File | Gunakan untuk |
 |------|---------------|
 | [campus_templates/generic.json](campus_templates/generic.json) | Preset generik - dipakai bila tidak ada preset kampus |
-| [campus_templates/ugm.json](campus_templates/ugm.json) | Preset Universitas Gadjah Mada |
-| [campus_templates/ui.json](campus_templates/ui.json) | Preset Universitas Indonesia |
-| [campus_templates/uny.json](campus_templates/uny.json) | Preset Universitas Negeri Yogyakarta |
-| [campus_templates/itb.json](campus_templates/itb.json) | Preset Institut Teknologi Bandung |
+| [campus_templates/ugm.json](campus_templates/ugm.json) | Universitas Gadjah Mada — **resmi**: Panduan Skripsi FKH UGM 2024 (+DTSL FT 2023 sbg catatan) |
+| [campus_templates/ui.json](campus_templates/ui.json) | Universitas Indonesia — **resmi**: Pedoman Penulisan TA UI 2017 (SK Rektor 2143/SK/R/UI/2017, lintas fakultas) |
+| [campus_templates/uny.json](campus_templates/uny.json) | Universitas Negeri Yogyakarta — konvensi umum |
+| [campus_templates/itb.json](campus_templates/itb.json) | Institut Teknologi Bandung — **resmi**: pedoman skripsi FITB/SITH (standar SPS ITB) |
 | [campus_templates/custom.json](campus_templates/custom.json) | Kerangka kosong untuk diisi preset institusi lain |
-| [campus_templates/ipb.json](campus_templates/ipb.json) | Institut Pertanian Bogor — konvensi umum |
+| [campus_templates/ipb.json](campus_templates/ipb.json) | Institut Pertanian Bogor — **resmi**: PPKI, PerRektor IPB 27/IT3/PP/2019 |
 | [campus_templates/unair.json](campus_templates/unair.json) | Universitas Airlangga — **resmi**: Buku Panduan Skripsi & TA Fakultas Vokasi 2025 |
 | [campus_templates/ub.json](campus_templates/ub.json) | Universitas Brawijaya — **resmi**: Panduan FT-UB 2016 (mirror margin) |
 | [campus_templates/its.json](campus_templates/its.json) | Institut Teknologi Sepuluh Nopember — **resmi**: Pedoman TA FTI-ITS 2021 |
-| [campus_templates/undip.json](campus_templates/undip.json) | Universitas Diponegoro — konvensi umum |
+| [campus_templates/undip.json](campus_templates/undip.json) | Universitas Diponegoro — **resmi**: Buku Saku Pedoman Skripsi FPIK UNDIP 2021 |
 | [campus_templates/unpad.json](campus_templates/unpad.json) | Universitas Padjadjaran — **resmi**: Pedoman FISIP/FTIP/Farmasi Unpad |
-| [campus_templates/unhas.json](campus_templates/unhas.json) | Universitas Hasanuddin — konvensi umum |
-| [campus_templates/telu.json](campus_templates/telu.json) | Telkom University — konvensi umum |
+| [campus_templates/unhas.json](campus_templates/unhas.json) | Universitas Hasanuddin — **resmi**: KepRect UNHAS 10438/UN4.1/KEP/2023 (B5, bab publikasi) |
+| [campus_templates/telu.json](campus_templates/telu.json) | Telkom University — **resmi**: Sistematika TA FEB Telkom 2015 |
 | [campus_templates/binus.json](campus_templates/binus.json) | BINUS University — konvensi umum |
-| [campus_templates/umy.json](campus_templates/umy.json) | Universitas Muhammadiyah Yogyakarta — konvensi umum |
-| [campus_templates/uii.json](campus_templates/uii.json) | Universitas Islam Indonesia — konvensi umum |
-| [campus_templates/uad.json](campus_templates/uad.json) | Universitas Ahmad Dahlan — konvensi umum |
-| [campus_templates/ums.json](campus_templates/ums.json) | Universitas Muhammadiyah Surakarta — konvensi umum |
+| [campus_templates/umy.json](campus_templates/umy.json) | Universitas Muhammadiyah Yogyakarta — **resmi**: Pedoman FEB UMY (SK Rektor 217/SK-UMY/X/2017) |
+| [campus_templates/uii.json](campus_templates/uii.json) | Universitas Islam Indonesia — **resmi**: Panduan TA Farmasi UII 2017 Rev 1 |
+| [campus_templates/uad.json](campus_templates/uad.json) | Universitas Ahmad Dahlan — **resmi**: Pedoman Skripsi FH UAD 2018 + Panduan FMIPA UAD 2.1 |
+| [campus_templates/ums.json](campus_templates/ums.json) | Universitas Muhammadiyah Surakarta — **resmi**: Buku Pedoman Skripsi Manajemen FEB UMS |
 | [campus_templates/udinus.json](campus_templates/udinus.json) | Universitas Dian Nusantara — konvensi umum |
 | [campus_templates/umm.json](campus_templates/umm.json) | Universitas Muhammadiyah Malang — konvensi umum |
 | [campus_templates/umb.json](campus_templates/umb.json) | Universitas Mercu Buana — konvensi umum |

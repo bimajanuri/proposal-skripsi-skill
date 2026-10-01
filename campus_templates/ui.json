@@ -6,11 +6,11 @@
     "thesis",
     "disertasi"
   ],
-  "verifikasi": "Preset ini disusun dari kebiasaan umum penulisan ilmiah. Cocokkan dengan pedoman resmi fakultas dan Senate UI sebelum submit.",
+  "verifikasi": "Angka format diambil dari Pedoman Penulisan Tugas Akhir UI 2017 yang berlaku untuk SELURUH fakultas, sekolah, dan vokasi UI (SK Rektor 2143/SK/R/UI/2017). Program studi boleh menambah ketentuan tersendiri; verifikasi bila fakultas Anda punya pedoman tambahan.",
   "gaya_dokumen": {
     "ukuran_halaman": "A4",
     "margin": {
-      "atas": "4 cm",
+      "atas": "3 cm",
       "bawah": "3 cm",
       "kiri": "4 cm",
       "kanan": "3 cm"
@@ -19,10 +19,11 @@
     "font_judul": "Times New Roman 14 pt tebal",
     "spasi": "1.5",
     "rata_kanan_kiri": "justify",
-    "penomoran_halaman": "angka arab, di tengah bawah",
-    "nomor_bab": "BAB I, BAB II, BAB III"
+    "penomoran_halaman": "bagian awal angka romawi kecil, tengah 2,5 cm dari tepi bawah; bagian isi & akhir angka arab di sudut kanan atas (1,5 cm tepi atas, 3 cm tepi kanan); halaman pertama tiap bab di tengah bawah",
+    "nomor_bab": "BAB I, BAB II, BAB III",
+    "catatan_tambahan": "Rata kiri-kanan (justify). Abstrak maks 500 kata, 1 spasi. Sampul karton + linen putih (Sarjana) / cokelat (Magister-Doktor). Logo UI diameter 2,5 cm. Judul sampul 14 pt."
   },
-  "sitasi": "APA 7",
+  "sitasi": "APA (Fakultas Psikologi & FEB UI merujuk APA Publication Manual) — verifikasi per fakultas",
   "kelengkapan": [
     "halaman judul",
     "lembar persetujuan",
@@ -40,7 +41,8 @@
     "BAB IV Hasil dan Pembahasan",
     "BAB V Kesimpulan dan Saran",
     "daftar pustaka",
-    "lampiran (instrumen, data, izin penelitian)"
+    "lampiran (instrumen, data, izin penelitian)",
+    "pernyataan persetujuan publikasi karya ilmiah"
   ],
   "struktur": [
     {
@@ -229,10 +231,12 @@
     }
   ],
   "sumber": {
-    "status": "konvensi-umum",
-    "dokumen": null,
-    "url": null,
-    "scope": "seluruh kampus (perlu konfirmasi)",
-    "catatan": "Preset lama, disusun dari kebiasaan umum penulisan ilmiah; belum diverifikasi ke pedoman resmi fakultas/program studi."
-  }
+    "status": "pedoman-resmi",
+    "dokumen": "Pedoman Penulisan Tugas Akhir Universitas Indonesia (revisi 2017), SK Rektor UI No. 2143/SK/R/UI/2017",
+    "url": "https://feb.ui.ac.id/uploads/2022/06/SK-Pedoman-Penulisan-Karya-Akhir-2017-UPDATE.pdf",
+    "scope": "UNIVERSITAS INDONESIA — berlaku untuk semua fakultas, sekolah, dan vokasi",
+    "tahun": 2017,
+    "catatan": "Pedoman tingkat universitas (disahkan SK Rektor UI 2143/SK/R/UI/2017), jadi yang paling berlaku lintas fakultas. Program Studi boleh menambah petunjuk sendiri di atas pedoman ini. Margin atas 3 cm tercantum pada butir 3.1.2 (Pengetikan)."
+  },
+  "daftar_pustaka": "heading \"DAFTAR PUSTAKA\"/\"DAFTAR REFERENSI\" di halaman baru"
 }

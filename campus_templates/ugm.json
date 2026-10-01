@@ -6,9 +6,9 @@
     "thesis",
     "disertasi"
   ],
-  "verifikasi": "Preset ini disusun dari kebiasaan umum pedoman penulisan ilmiah. Selalu cocokkan dengan pedoman resmi fakultas/program studi Anda sebelum submit.",
+  "verifikasi": "Angka format diambil dari Panduan Penulisan Skripsi Fakultas Kedokteran Hewan UGM (2024). UGM TIDAK memiliki satu pedoman tunggal: DTSL Fakultas Teknik (2023) mengatur spasi 1,15 dan margin berbeda. Wajib cek pedoman fakultas Anda; preset ini memakai nilai FKH sebagai titik awal.",
   "gaya_dokumen": {
-    "ukuran_halaman": "A4",
+    "ukuran_halaman": "A4 (kuarto 21 x 28 cm)",
     "margin": {
       "atas": "4 cm",
       "bawah": "3 cm",
@@ -17,12 +17,13 @@
     },
     "font_isi": "Times New Roman 12 pt",
     "font_judul": "Times New Roman 14 pt tebal",
-    "spasi": "1.5",
+    "spasi": "2",
     "rata_kanan_kiri": "justify",
-    "penomoran_halaman": "angka arab, di tengah bawah",
-    "nomor_bab": "BAB I, BAB II, BAB III"
+    "penomoran_halaman": "bagian awal angka romawi kecil di tengah bawah; bagian inti angka arab di tengah bawah (2 cm dari tepi bawah)",
+    "nomor_bab": "BAB I, BAB II, BAB III",
+    "catatan_tambahan": "FKH: spasi ganda, abstrak/daftar pustaka 1 spasi, abstrak maks 300 kata, kata kunci maks 5. TIDAK bolak-balik."
   },
-  "sitasi": "APA 7",
+  "sitasi": "APA 7 (Fakultas Kedokteran Hewan UGM, 2024)",
   "daftar_pustaka": "heading \"DAFTAR PUSTAKA\" di halaman baru",
   "kelengkapan": [
     "halaman judul",
@@ -41,7 +42,8 @@
     "BAB IV Hasil dan Pembahasan",
     "BAB V Kesimpulan dan Saran",
     "daftar pustaka",
-    "lampiran (instrumen, data, persetujuan)"
+    "lampiran (instrumen, data, persetujuan)",
+    "kata kunci (maks. 5 kata)"
   ],
   "struktur": [
     {
@@ -233,10 +235,11 @@
     }
   ],
   "sumber": {
-    "status": "konvensi-umum",
-    "dokumen": null,
-    "url": null,
-    "scope": "seluruh kampus (perlu konfirmasi)",
-    "catatan": "Preset lama, disusun dari kebiasaan umum penulisan ilmiah; belum diverifikasi ke pedoman resmi fakultas/program studi."
+    "status": "pedoman-resmi",
+    "dokumen": "Panduan Penulisan Skripsi Fakultas Kedokteran Hewan UGM",
+    "url": "https://fkh.ugm.ac.id/wp-content/uploads/sites/14/2024/08/Panduan-Skripsi-FKH-2024.pdf",
+    "scope": "Fakultas Kedokteran Hewan UGM (pedoman 2024)",
+    "tahun": 2024,
+    "catatan": "PEDOMAN UGM BEDA-BEDA ANTAR FAKULTAS. FKH (2024): spasi 2, kuarto 21x28, daftar pustaka APA 7. Sebaliknya DTSL Fakultas Teknik (2023, https://tsipil.ugm.ac.id/wp-content/uploads/sites/4/2023/02/Pedoman-Penulisan-DTSL_2023_v1-Final.pdf) menetapkan spasi 1,15, margin atas 2,5 / kiri 2,5 (cetak 3,5) / bawah 3,0 / kanan 2,5 cm. Nilai di preset ini mengikuti FKH."
   }
 }

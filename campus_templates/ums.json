@@ -6,13 +6,14 @@
     "thesis",
     "disertasi"
   ],
-  "verifikasi": "Preset ini BELUM diverifikasi ke pedoman resmi. Angka format berasal dari konvensi umum penulisan Indonesia, bukan dari dokumen Universitas Muhammadiyah Surakarta. Selalu cocokkan dengan pedoman resmi fakultas/program studi Anda sebelum submit.",
+  "verifikasi": "Angka format diambil dari Buku Pedoman Penulisan Skripsi Program Studi Manajemen, Fakultas Ekonomi dan Bisnis UMS (Program Studi Manajemen, Fakultas Ekonomi dan Bisnis UMS). Pedoman ini berlaku untuk fakultas/program studi tersebut; fakultas lain di Universitas Muhammadiyah Surakarta dapat berbeda. Cocokkan dengan pedoman unit Anda sebelum submit.",
   "sumber": {
-    "status": "konvensi-umum",
-    "dokumen": null,
-    "url": null,
-    "scope": "seluruh kampus (perlu konfirmasi)",
-    "catatan": "Ambil Pedoman Penulisan Skripsi resmi UMS."
+    "status": "pedoman-resmi",
+    "dokumen": "Buku Pedoman Penulisan Skripsi Program Studi Manajemen, Fakultas Ekonomi dan Bisnis UMS",
+    "url": "https://manajemen.ums.ac.id/wp-content/uploads/sites/29/2017/12/BUKU-PEDOMAN-SKRIPSI-MANAJEMEN.pdf",
+    "scope": "Program Studi Manajemen, Fakultas Ekonomi dan Bisnis UMS",
+    "tahun": 2017,
+    "catatan": "Pedoman spesifik prodi Manajemen FEB; prodi atau fakultas lain di UMS dapat berbeda. Margin tepi atas dan tepi kiri 4 cm, tepi bawah dan tepi kanan 3 cm."
   },
   "gaya_dokumen": {
     "ukuran_halaman": "A4",
@@ -24,10 +25,11 @@
     },
     "font_isi": "Times New Roman 12 pt",
     "font_judul": "Times New Roman 14 pt tebal",
-    "spasi": "1.5",
+    "spasi": "2",
     "rata_kanan_kiri": "justify",
-    "penomoran_halaman": "bagian awal angka romawi kecil, bagian inti angka arab, di tengah bawah",
-    "nomor_bab": "BAB I, BAB II, BAB III"
+    "penomoran_halaman": "bagian awal angka romawi kecil di bawah tengah; bagian isi dan akhir angka Arab 1,5 cm di kanan atas, kecuali halaman awal bab",
+    "nomor_bab": "BAB I, BAB II, BAB III",
+    "catatan_tambahan": "Kertas HVS A4 atau kuarto 70-80 gram, cetak satu muka. 1 spasi untuk abstrak, kutipan langsung, judul tabel, judul gambar, dan daftar pustaka. Rata kanan-kiri (justify). Alinea baru mulai spasi ke-7."
   },
   "sitasi": "APA 7",
   "daftar_pustaka": "heading \"DAFTAR PUSTAKA\" di halaman baru",

@@ -293,9 +293,75 @@ for preset in unpad ipb; do
     && ok "show $preset menampilkan provenance" || bad "show $preset tanpa provenance"
 done
 
-# 8d. generator harus idempoten: --check tidak menemukan drift
+# 8d. generator --check harus LOLOS saat repo sinkron (validasi + provenance + drift)
 python3 "$S/generate_campus_presets.py" --check >/dev/null 2>&1 \
-  && ok "generate_campus_presets.py --check" || bad "generate_campus_presets.py --check"
+  && ok "generate_campus_presets.py --check (repo sinkron)" \
+  || bad "generate_campus_presets.py --check (repo tidak sinkron)"
+
+# 8e. --check HARUS benar-benar mendeteksi drift, bukan sekadar validasi JSON
+#     disisipkan perubahan pada preset hasil generator -> --check wajib exit != 0
+cp "$ROOT/campus_templates/ums.json" "$TMP/ums.bak"
+python3 - "$ROOT" <<'PY'
+import json, sys, os
+p = os.path.join(sys.argv[1], "campus_templates", "ums.json")
+d = json.load(open(p, encoding="utf-8"))
+d["gaya_dokumen"]["margin"]["atas"] = "999 cm (DISISIH PENGUJI)"
+json.dump(d, open(p, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+PY
+if python3 "$S/generate_campus_presets.py" --check >/dev/null 2>&1; then
+  bad "--check GAGAS mendeteksi drift yang disisipkan"
+else
+  ok "--check mendeteksi drift yang disisipkan"
+fi
+cp "$TMP/ums.bak" "$ROOT/campus_templates/ums.json"
+python3 "$S/generate_campus_presets.py" --check >/dev/null 2>&1 \
+  && ok "drift-test: preset pulihkan & sinkron lagi" \
+  || bad "drift-test: preset tidak pulih ke sinkron"
+
+# 8f. --patch harus idempoten dan TIDAK boleh menimpa struktur tulisan tangan
+python3 - "$ROOT" <<'PY'
+import json, sys, os
+d = os.path.join(sys.argv[1], "campus_templates")
+out = {}
+for f in ("ugm", "ui", "itb"):
+    isi = json.load(open(os.path.join(d, f + ".json"), encoding="utf-8"))
+    out[f] = [b.get("id") for b in isi["struktur"]]
+json.dump(out, open(os.path.join(sys.argv[1], "..", "struktur_backup.json"), "w"))
+PY
+BEFORE=$(cat "$ROOT/../struktur_backup.json")
+python3 "$S/generate_campus_presets.py" --patch >/dev/null 2>&1 \
+  && ok "--patch berjalan" || bad "--patch gagal"
+AFTER=$(cat "$ROOT/../struktur_backup.json")
+[ "$BEFORE" = "$AFTER" ] \
+  && ok "--patch tidak menimpa struktur preset lama" \
+  || bad "--patch MENIMPA struktur preset lama"
+OUT2=$(python3 "$S/generate_campus_presets.py" --patch 2>&1)
+echo "$OUT2" | grep -q "Di-patch 0 preset lama" \
+  && ok "--patch idempoten (jalan kedua tidak mengubah apa pun)" \
+  || bad "--patch TIDAK idempotent"
+rm -f "$ROOT/../struktur_backup.json"
+
+# 8g. preset resmi harus punya sumber terisi; preset konvensi tidak boleh mengklaim URL
+python3 - "$ROOT" <<'PY' && ok "status sumber: resmi punya dokumen+tahun, konvensi jujur" || bad "status sumber tidak konsisten"
+import json, os, sys
+d = os.path.join(sys.argv[1], "campus_templates")
+n_resmi = 0
+for f in sorted(os.listdir(d)):
+    if not f.endswith(".json"):
+        continue
+    isi = json.load(open(os.path.join(d, f), encoding="utf-8"))
+    s = isi.get("sumber") or {}
+    if s.get("status") == "pedoman-resmi":
+        n_resmi += 1
+        assert s.get("dokumen"), f"{f}: resmi tanpa dokumen"
+        assert s.get("tahun"), f"{f}: resmi tanpa tahun"
+        assert s.get("scope"), f"{f}: resmi tanpa scope"
+        assert s.get("url", "").startswith("http"), f"{f}: resmi tanpa URL http"
+    else:
+        assert s.get("status") == "konvensi-umum", f"{f}: status tak dikenal"
+        assert not s.get("url"), f"{f}: konvensi-umum jangan punya URL"
+assert n_resmi >= 16, f"hanya {n_resmi} preset resmi; target >= 16"
+PY
 
 python3 "$S/apply_campus_template.py" init generic -o "$TMP/krangka.md" \
     --judul "Uji" --nama "Uji" --nim "1" --pembimbing "Uji" --tahun 2026 >/dev/null 2>&1 \

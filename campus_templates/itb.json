@@ -6,23 +6,24 @@
     "thesis",
     "disertasi"
   ],
-  "verifikasi": "Preset ini disusun dari kebiasaan umum penulisan ilmiah. Cocokkan dengan pedoman resmi program studi dan departemen ITB sebelum submit.",
+  "verifikasi": "Angka format diambil dari pedoman penulisan skripsi FITB-ITB yang sendirinya mengacu pada standar Sekolah Pascasarjana ITB, dan dikonfirmasi oleh pedoman SITH-ITB (spasi 1,5; margin 4/3/4/3 cm). ITB menyatakan setiap program studi punya kekhasan format; cocokkan dengan prodi Anda.",
   "gaya_dokumen": {
     "ukuran_halaman": "A4",
     "margin": {
       "atas": "4 cm",
       "bawah": "3 cm",
-      "kiri": "4 cm",
+      "kiri": "4 cm (termasuk 1 cm penjilidan)",
       "kanan": "3 cm"
     },
     "font_isi": "Times New Roman 12 pt",
     "font_judul": "Times New Roman 14 pt tebal",
     "spasi": "1.5",
     "rata_kanan_kiri": "justify",
-    "penomoran_halaman": "angka arab, di tengah bawah",
-    "nomor_bab": "BAB I, BAB II, BAB III"
+    "penomoran_halaman": "bagian awal angka romawi kecil; bagian isi & akhir angka arab",
+    "nomor_bab": "BAB I, BAB II, BAB III",
+    "catatan_tambahan": "1 spasi untuk catatan kaki, keterangan tabel, keterangan gambar, dan daftar pustaka. Paragraf baru 3 spasi. Dicetak satu muka. Sampul hard cover biru tua. Standar acuan: Pedoman Format Penulisan Tesis Magister, Sekolah Pascasarjana ITB."
   },
-  "sitasi": "IEEE (untuk bidang teknik)",
+  "sitasi": "IEEE (untuk bidang teknik, sesuai default ITB)",
   "kelengkapan": [
     "halaman judul",
     "lembar persetujuan",
@@ -225,10 +226,12 @@
     }
   ],
   "sumber": {
-    "status": "konvensi-umum",
-    "dokumen": null,
-    "url": null,
-    "scope": "seluruh kampus (perlu konfirmasi)",
-    "catatan": "Preset lama, disusun dari kebiasaan umum penulisan ilmiah; belum diverifikasi ke pedoman resmi fakultas/program studi."
-  }
+    "status": "pedoman-resmi",
+    "dokumen": "Tata-cara Penulisan Skripsi Program Studi Teknik Geologi, FITB-ITB (mengikuti standar Sekolah Pascasarjana ITB)",
+    "url": "https://ditdik.itb.ac.id/wp-content/uploads/sites/90/2015/10/format-penulisan-ta-bentuk-buku-revisi.pdf",
+    "scope": "Fakultas Ilmu dan Teknologi Kebumian (FITB) ITB; standar School of Graduate Studies (SPS) ITB berlaku lintas fakultas",
+    "tahun": 2015,
+    "catatan": "Nilai dikonfirmasi juga oleh SITH-Rekayasa Pertanian (https://rp.sith.itb.ac.id/wp-content/uploads/sites/168/2016/09/Panduan-Penulisan-Skripsi-dan-Draft-Publikasi.pdf): TNR 12, spasi 1,5, margin 4/3/4/3 cm. ITB menyatakan tiap prodi punya kekhasan sendiri; perbedaan kecil antar prodi wajar."
+  },
+  "daftar_pustaka": "heading \"DAFTAR PUSTAKA\" di halaman baru"
 }

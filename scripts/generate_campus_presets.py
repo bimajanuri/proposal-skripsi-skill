@@ -14,9 +14,17 @@ Aturan main sumber data (anti-hafalan):
   - Tidak ada preset yang mengklaim "semua fakultas" bila sumbernya satu fakultas.
 
 Perintah:
-    generate_campus_presets.py              tulis ulang semua preset yang di-flag regenerate
-    generate_campus_presets.py --check      hanya verifikasi JSON valid & provenance lengkap
+    generate_campus_presets.py              tulis ulang semua preset regenerate=True
+    generate_campus_presets.py --check      validasi + deteksi DRIFT (keluar 1 bila tidak sinkron)
     generate_campus_presets.py --only unpad  (bang ulang satu preset)
+    generate_campus_presets.py --patch      merge gaya/provenance ke preset LAMA
+                                            (ugm/ui/itb) tanpa menimpa `struktur`
+                                            hasil tulisan tangan. Idempoten.
+
+Catatan nilai:
+  - Angka yang tidak tercantum pada dokumen resmi ditulis apa adanya sebagai
+    "perlu konfirmasi (bagian X)", bukan ditebak. `validasi()` tetap lolos karena
+    nilai berupa string; yang hilang adalah kepastian, bukan kejujuran.
 """
 
 import argparse
@@ -260,12 +268,32 @@ def daftarkan(nama_file, preset, regenerate=True):
 # ── 1. IPB ──────────────────────────────────────────────────────────────────
 daftarkan(
     "ipb",
-    konvensi(
+    resmi(
         "ipb",
         "Institut Pertanian Bogor",
         "IPB",
-        "FAPET IPB menerbitkan Pedoman Penulisan Karya Ilmiah (PPKI); struktur & "
-        "format perlu diambil langsung dari pedoman tersebut, bukan dari preset ini.",
+        "Peraturan Rektor IPB No. 27/IT3/PP/2019 tentang Pedoman Penulisan Karya "
+        "Ilmiah Tugas Akhir Mahasiswa IPB (PPKI)",
+        "https://fapet.ipb.ac.id/~pascafapet/dokumen/pedoman_penulisan_karya_ilmiah.pdf",
+        "UNIVERSITAS IPB - peraturan rektor, berlaku lintas fakultas/program studi",
+        2019,
+        "Menggantikan PERREKTOR No. 9/IT3/LT/2012. Hak cipta karya ilmiah menjadi milik "
+        "IPB. Abstrak wajib diterjemahkan ke bahasa Inggris (kecuali laporan akhir D-3). "
+        "ANGKA SPASI DAN MARGIN ada di Bab III dan lampiran dokumen, tidak tercantum "
+        "pada halaman rujukan - mohon periksa lampiran pedoman asli.",
+        gaya(
+            margin={"atas": "perlu konfirmasi (Bab III / lampiran PPKI)",
+                    "bawah": "perlu konfirmasi", "kiri": "perlu konfirmasi",
+                    "kanan": "perlu konfirmasi"},
+            spasi="perlu konfirmasi (Bab III / lampiran PPKI)",
+            penomoran="ringkasan dan summary memakai angka romawi kecil",
+            align="Mengikuti KBBI dan PUEBI edisi terbaru. Ringkasan maksimal 2 halaman, "
+                  "1 spasi, kata kunci maksimal 5 kata dengan huruf awal besar. Memuat "
+                  "halaman hak cipta, halaman judul dalam, dan halaman tim penguji.",
+        ),
+        sitasi="Sesuai Bab VII PPKI IPB - periksa lampiran pedoman",
+        kelengkapan_tambahan=["halaman hak cipta", "halaman judul dalam",
+                              "halaman tim penguji", "ringkasan", "summary"],
     ),
 )
 
@@ -338,12 +366,27 @@ daftarkan(
 # ── 5. UNDIP ────────────────────────────────────────────────────────────────
 daftarkan(
     "undip",
-    konvensi(
+    resmi(
         "undip",
         "Universitas Diponegoro",
         "UNDIP",
-        "Fakultas FISIP UNDIP menerbitkan Guidance for Thesis and Dissertation "
-        "Writing; ambil angka format dari pedoman fakultas Anda.",
+        "Buku Saku Pedoman Penulisan Skripsi Fakultas Perikanan dan Ilmu Kelautan "
+        "(FPIK) UNDIP",
+        "https://dpt.undip.ac.id/wp-content/uploads/2022/11/Buku-Saku-Pedoman-Skripsi-FPIK-2021.pdf",
+        "FPIK UNDIP (edisi 2021); dikonfirmasi pula oleh FPP UNDIP",
+        2021,
+        "CATATAN PENTING: FPIK UNDIP memberi NOMOR BAB dengan ANGKA ARAB (1, 2, 3), "
+        "berbeda dari UGM, UI, dan UMY yang memakai angka Romawi. Margin atas 3 cm, "
+        "bukan 4 cm.",
+        gaya(
+            margin={"atas": "3 cm", "bawah": "3 cm", "kiri": "4 cm", "kanan": "3 cm"},
+            spasi="1.5",
+            penomoran="nomor bab memakai ANGKA ARAB; nomor halaman 2 cm dari tepi kanan",
+            align="1 spasi untuk abstrak, daftar isi/tabel/gambar/lampiran, isi tabel, "
+                  "dan daftar pustaka. Judul bab dan subbab bold kapital. "
+                  "Alinea baru 1,25 cm (1 tab).",
+        ),
+        kelengkapan_tambahan=["pernyataan orisinalitas", "halaman tim penguji"],
     ),
 )
 
@@ -370,14 +413,65 @@ daftarkan(
 )
 
 # ── 7. UNHAS ────────────────────────────────────────────────────────────────
-daftarkan("unhas", konvensi(
-    "unhas", "Universitas Hasanuddin", "UNHAS",
-    "Ambil pedoman penulisan skripsi resmi UNHAS/Fakultas Anda."))
+daftarkan(
+    "unhas",
+    resmi(
+        "unhas",
+        "Universitas Hasanuddin",
+        "UNHAS",
+        "Pedoman Penulisan Tugas Akhir Mahasiswa di Lingkup Universitas Hasanuddin, "
+        "Keputusan Rektor UNHAS No. 10438/UN4.1/KEP/2023",
+        "https://peternakan.unhas.ac.id/wp-content/uploads/2024/09/32-Pedoman-Penulisan_Tugas_Akhir_Skripsi-Tesis-Disertasi-2023.pdf",
+        "UNIVERSITAS HASANUDDIN - keputusan rektor, berlaku lintas fakultas",
+        2023,
+        "BEDA BESAR DARI KAMPUS LAIN: (1) memakai kertas B5 176 x 250 mm (format buku), "
+        "BUKAN A4; (2) bab berbasis publikasi (publication-based) sesuai "
+        "Permendikbudristek 53/2023, hasil publikasi menjadi unsur utama; (3) struktur "
+        "bab Pendahuluan, Metode, Hasil, Pembahasan, dan Kesimpulan. Margin atas dan "
+        "bawah 22,5 mm pada halaman judul. Font dan spasi perlu diperiksa di Bab V.",
+        gaya(
+            ukuran_halaman="B5 (176 x 250 mm) - format buku, bukan A4",
+            margin={"atas": "2,25 cm (22,5 mm, halaman judul)", "bawah": "2,25 cm (22,5 mm)",
+                    "kiri": "simetris terhadap teks", "kanan": "simetris terhadap teks"},
+            spasi="perlu konfirmasi (Bab V.1.6)",
+            penomoran="daftar isi otomatis; kata kunci memakai huruf abjad dan italic",
+            align="Sampul seragam untuk semua fakultas: skripsi merah, tesis biru langit, "
+                  "disertasi putih. Abstrak wajib ada. Daftar istilah, singkatan, dan "
+                  "simbol dilampirkan.",
+        ),
+        kelengkapan_tambahan=["daftar istilah/singkatan/simbol", "abstrak (wajib)"],
+    ),
+)
 
 # ── 8. Telkom University ─────────────────────────────────────────────────────
-daftarkan("telu", konvensi(
-    "telu", "Telkom University", "TEL-U",
-    "Ambil Panduan Penulisan Tugas Akhir resmi Telkom University."))
+daftarkan(
+    "telu",
+    resmi(
+        "telu",
+        "Telkom University",
+        "TEL-U",
+        "Sistematika dan Tata Cara Penulisan Tugas Akhir Fakultas Ekonomi dan Bisnis, "
+        "Universitas Telkom",
+        "https://mm.telkomuniversity.ac.id/wp-content/uploads/2017/03/Pedoman-Tugas-Akhir-FEB-Februari-2015.pdf",
+        "Fakultas Ekonomi dan Bisnis, Telkom University (pedoman Februari 2015)",
+        2015,
+        "Pedoman spesifik FEB; fakultas lain Telkom University dapat berbeda. Dokumen "
+        "menyebut pedoman lengkap akan diperbarui setelah prosedur taskskripsi selesai "
+        "disahkan - periksa versi terbaru dari unit Anda.",
+        gaya(
+            margin={"atas": "3 cm", "bawah": "3 cm",
+                    "kiri": "4 cm (termasuk 1 cm penjilidan)", "kanan": "3 cm"},
+            spasi="1.5",
+            penomoran="nomor bab ditulis lengkap dengan kata BAB dan angka Arab "
+                       "(contoh: BAB 1 PENDAHULUAN)",
+            align="Rata kiri-kanan (justify). Paragraf baru indent 5 karakter. "
+                  "Daftar pustaka 1 spasi dengan hanging indent 5 karakter, urutan "
+                  "alphabetis. Setiap bab dimulai pada halaman ganjil.",
+        ),
+        sitasi="APA (Publication Manual edisi ke-6 atau terbaru) - disebut eksplisit di pedoman",
+        kelengkapan_tambahan=["daftar istilah (lampiran)"],
+    ),
+)
 
 # ── 9. BINUS ─────────────────────────────────────────────────────────────────
 daftarkan("binus", konvensi(
@@ -385,24 +479,117 @@ daftarkan("binus", konvensi(
     "Ambil Pedoman Penulisan Skripsi/Thesis BINUS resmi; sitasi BINUS umumnya APA."))
 
 # ── 10. UMY ─────────────────────────────────────────────────────────────────
-daftarkan("umy", konvensi(
-    "umy", "Universitas Muhammadiyah Yogyakarta", "UMY",
-    "Ambil Pedoman Penulisan Skripsi resmi UMY."))
+daftarkan(
+    "umy",
+    resmi(
+        "umy",
+        "Universitas Muhammadiyah Yogyakarta",
+        "UMY",
+        "Pedoman Penulisan Usulan Penelitian, Skripsi dan Publikasi Karya Ilmiah, "
+        "Fakultas Ekonomi dan Bisnis UMY (berdasar Keputusan Rektor UMY "
+        "No. 217/SK-UMY/X/2017)",
+        "https://ipief.umy.ac.id/wp-content/uploads/2020/10/PEDOMAN_PENULISAN_USULAN_PENELITIAN.pdf",
+        "Fakultas Ekonomi dan Bisnis UMY, mengacu pada SK Rektor UMY 217/SK-UMY/X/2017",
+        2017,
+        "Buku panduan ini diterbitkan FEB UMY tetapi merujuk peraturan rektor UMY "
+        "tingkat universitas. ANGKA MARGIN tidak tercantum pada halaman rujukan - "
+        "wajib periksa bagian batas pengetikan pada pedoman asli.",
+        gaya(
+            margin={"atas": "perlu konfirmasi (pedoman FEB UMY)",
+                    "bawah": "perlu konfirmasi",
+                    "kiri": "perlu konfirmasi", "kanan": "perlu konfirmasi"},
+            spasi="2",
+            penomoran="bagian awal angka romawi kecil; bagian isi angka Arab",
+            align="1 spasi untuk intisari, kutipan langsung, judul tabel dan gambar lebih "
+                  "dari satu baris, serta daftar pustaka. Daftar pustaka memakai hanging "
+                  "indent 7 karakter dengan jarak antar sumber 2 spasi. Deteksi plagiasi "
+                  "mengikuti bab V SK Rektor UMY.",
+        ),
+    ),
+)
 
 # ── 11. UII ──────────────────────────────────────────────────────────────────
-daftarkan("uii", konvensi(
-    "uii", "Universitas Islam Indonesia", "UII",
-    "Ambil Pedoman Penulisan Skripsi resmi UII; perhatikan aturan bahasa Arab/Inggris bila relevan."))
+daftarkan(
+    "uii",
+    resmi(
+        "uii",
+        "Universitas Islam Indonesia",
+        "UII",
+        "Panduan Penulisan Tugas Akhir Fakultas Ilmu Farmasi dan Ilmu Gizi, "
+        "Universitas Islam Indonesia (TA 2017 Rev 1)",
+        "https://science.uii.ac.id/wp-content/uploads/panduan-TA-2017-Rev1-Fix-Farmasi.pdf",
+        "Fakultas Ilmu Farmasi dan Ilmu Gizi UII (pedoman 2017 Rev 1)",
+        2017,
+        "Struktur halaman UII mengikuti pedoman UI 2017. Dokumen aslinya memakai margin "
+        "atas 4 cm pada halaman pengesahan, sedangkan naskah badan memakai 3 cm; "
+        "perbedaan itu memang ada di dalam pedoman.",
+        gaya(
+            margin={"atas": "3 cm (naskah badan); 4 cm pada halaman pengesahan",
+                    "bawah": "3 cm", "kiri": "4 cm", "kanan": "3 cm"},
+            spasi="1.5",
+            penomoran="bagian awal angka romawi kecil; bagian isi angka Arab",
+            align="Keterangan tabel dan gambar memakai TNR 10. 1 spasi untuk intisari, "
+                  "abstract, daftar pustaka, isi tabel, serta judul tabel atau gambar "
+                  "lebih dari satu baris. Alinea baru mulai setelah ketukan ke-6 dari tepi "
+                  "kiri. Ada panduan khusus penulisan bahasa Arab.",
+        ),
+    ),
+)
 
 # ── 12. UAD ──────────────────────────────────────────────────────────────────
-daftarkan("uad", konvensi(
-    "uad", "Universitas Ahmad Dahlan", "UAD",
-    "Ambil Pedoman Akademik/Penulisan Skripsi resmi UAD."))
+daftarkan(
+    "uad",
+    resmi(
+        "uad",
+        "Universitas Ahmad Dahlan",
+        "UAD",
+        "Pedoman Penyusunan Skripsi Fakultas Hukum UAD (2018), dikonfirmasi Panduan "
+        "Penulisan Laporan Tugas Akhir FMIPA UAD (Edisi 2.1)",
+        "https://law.uad.ac.id/wp-content/uploads/Pedoman-Penyusunan-Skripsi-new-Copy-review.pdf",
+        "Fakultas Hukum UAD (2018) dan Fakultas MIPA UAD (edisi 2.1)",
+        2018,
+        "Kedua fakultas konsisten: TNR 12 dan spasi 2. ANGKA MARGIN tidak tercantum "
+        "pada halaman rujukan - wajib periksa bagian batas tepi pada pedoman asli.",
+        gaya(
+            margin={"atas": "perlu konfirmasi (bagian batas tepi pedoman UAD)",
+                    "bawah": "perlu konfirmasi", "kiri": "perlu konfirmasi",
+                    "kanan": "perlu konfirmasi"},
+            spasi="2",
+            penomoran="bagian awal angka romawi kecil di bawah tengah; nomor bab memakai "
+                       "angka Romawi kapital",
+            align="FMIPA memberi tabel spasi rinci (judul bab 1 spasi dengan 6 pt setelah; "
+                  "baris pertama paragraf 3 spasi). 1 spasi untuk abstrak, kutipan "
+                  "langsung, dan daftar pustaka. Isi tabel dan judul gambar memakai 11. "
+                  "Kata kunci maksimal 5 kata italic. Judul skripsi TNR 14 kapital.",
+        ),
+    ),
+)
 
 # ── 13. UMS ──────────────────────────────────────────────────────────────────
-daftarkan("ums", konvensi(
-    "ums", "Universitas Muhammadiyah Surakarta", "UMS",
-    "Ambil Pedoman Penulisan Skripsi resmi UMS."))
+daftarkan(
+    "ums",
+    resmi(
+        "ums",
+        "Universitas Muhammadiyah Surakarta",
+        "UMS",
+        "Buku Pedoman Penulisan Skripsi Program Studi Manajemen, Fakultas Ekonomi dan "
+        "Bisnis UMS",
+        "https://manajemen.ums.ac.id/wp-content/uploads/sites/29/2017/12/BUKU-PEDOMAN-SKRIPSI-MANAJEMEN.pdf",
+        "Program Studi Manajemen, Fakultas Ekonomi dan Bisnis UMS",
+        2017,
+        "Pedoman spesifik prodi Manajemen FEB; prodi atau fakultas lain di UMS dapat "
+        "berbeda. Margin tepi atas dan tepi kiri 4 cm, tepi bawah dan tepi kanan 3 cm.",
+        gaya(
+            margin={"atas": "4 cm", "bawah": "3 cm", "kiri": "4 cm", "kanan": "3 cm"},
+            spasi="2",
+            penomoran="bagian awal angka romawi kecil di bawah tengah; bagian isi dan "
+                       "akhir angka Arab 1,5 cm di kanan atas, kecuali halaman awal bab",
+            align="Kertas HVS A4 atau kuarto 70-80 gram, cetak satu muka. 1 spasi untuk "
+                  "abstrak, kutipan langsung, judul tabel, judul gambar, dan daftar "
+                  "pustaka. Rata kanan-kiri (justify). Alinea baru mulai spasi ke-7.",
+        ),
+    ),
+)
 
 # ── 14. UDINUS ───────────────────────────────────────────────────────────────
 daftarkan("udinus", konvensi(
@@ -526,12 +713,169 @@ def backfill_sumber():
     return berubah
 
 
+def patch_legacy():
+    """Perbarui gaya_dokumen/sitasi/sumber pada preset lama TANPA menyentuh `struktur`.
+
+    Preset ugm/ui/itb/uny/generic/custom sebelumnya ditulis tangan dan `struktur`-nya
+    sudah dipakai sebagai acuan; generator tidak boleh menimpanya. `--patch` hanya
+    merge field gaya + provenance, jadi blok bab tambahan tetap utuh. Idempoten.
+    """
+    berubah = []
+    for nama_file, patch in sorted(PATCH_LEGACY.items()):
+        path = os.path.join(DIR_PRESET, f"{nama_file}.json")
+        if not os.path.exists(path):
+            print(f"  LEWATI  {nama_file}.json tidak ada")
+            continue
+        with open(path, encoding="utf-8") as fh:
+            isi = json.load(fh)
+        sebelum = json.dumps(isi, sort_keys=True, ensure_ascii=False)
+        isi["gaya_dokumen"] = patch["gaya_dokumen"]
+        isi["sitasi"] = patch["sitasi"]
+        isi["sumber"] = patch["sumber"]
+        isi["verifikasi"] = patch["verifikasi"]
+        if patch.get("daftar_pustaka"):
+            isi["daftar_pustaka"] = patch["daftar_pustaka"]
+        if patch.get("kelengkapan_tambahan"):
+            ada = set(isi.get("kelengkapan", []))
+            for k in patch["kelengkapan_tambahan"]:
+                if k not in ada:
+                    isi.setdefault("kelengkapan", []).append(k)
+                    ada.add(k)
+        validasi(nama_file, isi)
+        sesudah = json.dumps(isi, sort_keys=True, ensure_ascii=False)
+        if sebelum != sesudah:
+            with open(path, "w", encoding="utf-8") as fh:
+                json.dump(isi, fh, ensure_ascii=False, indent=2)
+                fh.write("\n")
+            berubah.append(nama_file)
+        else:
+            print(f"  TIDAK BERUBAH  {nama_file}.json")
+    return berubah
+
+
+# ── Patch untuk preset lama (struktur tetap, gaya + provenance di-update) ─────
+# Patch dipakai oleh `generate_campus_presets.py --patch`.
+# Hanya field gaya_dokumen/sitasi/daftar_pustaka/kelengkapan/sumber/verifikasi
+# yang di-merge; `struktur` hasil tulisan tangan tidak pernah ditimpa.
+PATCH_LEGACY = {}
+
+# ── UGM ──────────────────────────────────────────────────────────────────────
+# Divergent antar fakultas; nilai dasar memakai FKH (2024).
+PATCH_LEGACY["ugm"] = {
+    "gaya_dokumen": gaya(
+        ukuran_halaman="A4 (kuarto 21 x 28 cm)",
+        margin={"atas": "4 cm", "bawah": "3 cm", "kiri": "4 cm", "kanan": "3 cm"},
+        spasi="2",
+        penomoran="bagian awal angka romawi kecil di tengah bawah; bagian inti angka arab "
+                   "di tengah bawah (2 cm dari tepi bawah)",
+        align="FKH: spasi ganda, abstrak/daftar pustaka 1 spasi, abstrak maks 300 kata, "
+              "kata kunci maks 5. TIDAK bolak-balik.",
+    ),
+    "sitasi": "APA 7 (Fakultas Kedokteran Hewan UGM, 2024)",
+    "daftar_pustaka": 'heading "DAFTAR PUSTAKA" di halaman baru',
+    "kelengkapan_tambahan": ["kata kunci (maks. 5 kata)"],
+    "sumber": {
+        "status": "pedoman-resmi",
+        "dokumen": "Panduan Penulisan Skripsi Fakultas Kedokteran Hewan UGM",
+        "url": "https://fkh.ugm.ac.id/wp-content/uploads/sites/14/2024/08/Panduan-Skripsi-FKH-2024.pdf",
+        "scope": "Fakultas Kedokteran Hewan UGM (pedoman 2024)",
+        "tahun": 2024,
+        "catatan": "PEDOMAN UGM BEDA-BEDA ANTAR FAKULTAS. FKH (2024): spasi 2, kuarto "
+                   "21x28, daftar pustaka APA 7. Sebaliknya DTSL Fakultas Teknik (2023, "
+                   "https://tsipil.ugm.ac.id/wp-content/uploads/sites/4/2023/02/"
+                   "Pedoman-Penulisan-DTSL_2023_v1-Final.pdf) menetapkan spasi 1,15, "
+                   "margin atas 2,5 / kiri 2,5 (cetak 3,5) / bawah 3,0 / kanan 2,5 cm. "
+                   "Nilai di preset ini mengikuti FKH.",
+    },
+    "verifikasi": (
+        "Angka format diambil dari Panduan Penulisan Skripsi Fakultas Kedokteran Hewan "
+        "UGM (2024). UGM TIDAK memiliki satu pedoman tunggal: DTSL Fakultas Teknik (2023) "
+        "mengatur spasi 1,15 dan margin berbeda. Wajib cek pedoman fakultas Anda; "
+        "preset ini memakai nilai FKH sebagai titik awal."
+    ),
+}
+
+# ── UI ───────────────────────────────────────────────────────────────────────
+# Sumber terbaik sejauh ini: pedoman tingkat UNIVERSITAS (semua fakultas).
+PATCH_LEGACY["ui"] = {
+    "gaya_dokumen": gaya(
+        margin={"atas": "3 cm", "bawah": "3 cm", "kiri": "4 cm", "kanan": "3 cm"},
+        spasi="1.5",
+        penomoran="bagian awal angka romawi kecil, tengah 2,5 cm dari tepi bawah; "
+                   "bagian isi & akhir angka arab di sudut kanan atas "
+                   "(1,5 cm tepi atas, 3 cm tepi kanan); halaman pertama tiap bab di tengah bawah",
+        align="Rata kiri-kanan (justify). Abstrak maks 500 kata, 1 spasi. "
+              "Sampul karton + linen putih (Sarjana) / cokelat (Magister-Doktor). "
+              "Logo UI diameter 2,5 cm. Judul sampul 14 pt.",
+    ),
+    "sitasi": "APA (Fakultas Psikologi & FEB UI merujuk APA Publication Manual) — verifikasi per fakultas",
+    "daftar_pustaka": 'heading "DAFTAR PUSTAKA"/"DAFTAR REFERENSI" di halaman baru',
+    "kelengkapan_tambahan": ["pernyataan persetujuan publikasi karya ilmiah"],
+    "sumber": {
+        "status": "pedoman-resmi",
+        "dokumen": "Pedoman Penulisan Tugas Akhir Universitas Indonesia (revisi 2017), "
+                   "SK Rektor UI No. 2143/SK/R/UI/2017",
+        "url": "https://feb.ui.ac.id/uploads/2022/06/SK-Pedoman-Penulisan-Karya-Akhir-2017-UPDATE.pdf",
+        "scope": "UNIVERSITAS INDONESIA — berlaku untuk semua fakultas, sekolah, dan vokasi",
+        "tahun": 2017,
+        "catatan": "Pedoman tingkat universitas (disahkan SK Rektor UI 2143/SK/R/UI/2017), "
+                   "jadi yang paling berlaku lintas fakultas. Program Studi boleh menambah "
+                   "petunjuk sendiri di atas pedoman ini. Margin atas 3 cm tercantum "
+                   "pada butir 3.1.2 (Pengetikan).",
+    },
+    "verifikasi": (
+        "Angka format diambil dari Pedoman Penulisan Tugas Akhir UI 2017 yang "
+        "berlaku untuk SELURUH fakultas, sekolah, dan vokasi UI (SK Rektor "
+        "2143/SK/R/UI/2017). Program studi boleh menambah ketentuan tersendiri; "
+        "verifikasi bila fakultas Anda punya pedoman tambahan."
+    ),
+}
+
+# ── ITB ──────────────────────────────────────────────────────────────────────
+PATCH_LEGACY["itb"] = {
+    "gaya_dokumen": gaya(
+        margin={"atas": "4 cm", "bawah": "3 cm", "kiri": "4 cm (termasuk 1 cm penjilidan)",
+                "kanan": "3 cm"},
+        spasi="1.5",
+        penomoran="bagian awal angka romawi kecil; bagian isi & akhir angka arab",
+        align="1 spasi untuk catatan kaki, keterangan tabel, keterangan gambar, dan daftar "
+              "pustaka. Paragraf baru 3 spasi. Dicetak satu muka. Sampul hard cover "
+              "biru tua. Standar acuan: Pedoman Format Penulisan Tesis Magister, "
+              "Sekolah Pascasarjana ITB.",
+    ),
+    "sitasi": "IEEE (untuk bidang teknik, sesuai default ITB)",
+    "daftar_pustaka": 'heading "DAFTAR PUSTAKA" di halaman baru',
+    "sumber": {
+        "status": "pedoman-resmi",
+        "dokumen": "Tata-cara Penulisan Skripsi Program Studi Teknik Geologi, "
+                   "FITB-ITB (mengikuti standar Sekolah Pascasarjana ITB)",
+        "url": "https://ditdik.itb.ac.id/wp-content/uploads/sites/90/2015/10/format-penulisan-ta-bentuk-buku-revisi.pdf",
+        "scope": "Fakultas Ilmu dan Teknologi Kebumian (FITB) ITB; standar School of "
+                 "Graduate Studies (SPS) ITB berlaku lintas fakultas",
+        "tahun": 2015,
+        "catatan": "Nilai dikonfirmasi juga oleh SITH-Rekayasa Pertanian "
+                   "(https://rp.sith.itb.ac.id/wp-content/uploads/sites/168/2016/09/"
+                   "Panduan-Penulisan-Skripsi-dan-Draft-Publikasi.pdf): TNR 12, spasi 1,5, "
+                   "margin 4/3/4/3 cm. ITB menyatakan tiap prodi punya kekhasan sendiri; "
+                   "perbedaan kecil antar prodi wajar.",
+    },
+    "verifikasi": (
+        "Angka format diambil dari pedoman penulisan skripsi FITB-ITB yang "
+        "sendirinya mengacu pada standar Sekolah Pascasarjana ITB, dan dikonfirmasi "
+        "oleh pedoman SITH-ITB (spasi 1,5; margin 4/3/4/3 cm). ITB menyatakan setiap "
+        "program studi punya kekhasan format; cocokkan dengan prodi Anda."
+    ),
+}
+
+
 def main():
     ap = argparse.ArgumentParser(description="Generate preset campus_templates")
     ap.add_argument("--check", action="store_true",
-                    help="hanya verifikasi JSON valid & provenance lengkap")
+                    help="validasi JSON + provenance + deteksi drift (exit 1 bila tidak sinkron)")
     ap.add_argument("--backfill", action="store_true",
                     help="tambahkan sumber.status=konvensi-umum ke preset tanpa provenance")
+    ap.add_argument("--patch", action="store_true",
+                    help="merge gaya_dokumen/sitasi/sumber ke preset lama, struktur diutmakan")
     ap.add_argument("--only", help="generate satu preset (nama file tanpa .json)")
     args = ap.parse_args()
 
@@ -543,29 +887,51 @@ def main():
             print("Semua preset sudah punya provenance; tidak ada perubahan.")
         return 0
 
+    if args.patch:
+        berubah = patch_legacy()
+        print(f"Di-patch {len(berubah)} preset lama: {', '.join(berubah) if berubah else '(tidak ada)'}")
+        print("Catatan: field `struktur` preset lama tidak disentuh.")
+        return 0
+
     targets = PRESETS
     if args.only:
         if args.only not in PRESETS:
             sys.exit(f"ERROR: tidak dikenal: {args.only}")
         targets = {args.only: PRESETS[args.only]}
 
-    dibuat, dilewati = [], []
+    dibuat, dilewati, drift = [], [], []
     for nama_file, info in sorted(targets.items()):
         preset = info["preset"]
         path = os.path.join(DIR_PRESET, f"{nama_file}.json")
         validasi(nama_file, preset)
 
         if args.check:
-            # pastikan file di disk cocok dengan yang akan di-generate (deteksi drift)
+            # --check = validasi + DETEKSI DRIFT: bandingkan isi di disk dengan
+            # hasil generator. Hanya berlaku untuk preset regenerate=True;
+            # preset lama (ugm/ui/uny/itb/generic/custom) tidak terdaftar di
+            # PRESETS dan tetap diperiksa terpisah oleh tests/run_tests.sh.
             if not os.path.exists(path):
                 print(f"  HILANG   {nama_file}.json")
-            else:
-                with open(path, encoding="utf-8") as fh:
-                    try:
-                        json.load(fh)
-                        dibuat.append(nama_file)
-                    except json.JSONDecodeError as e:
-                        print(f"  RUSAK    {nama_file}.json: {e}")
+                drift.append(nama_file)
+                continue
+            with open(path, encoding="utf-8") as fh:
+                try:
+                    isi_disk = json.load(fh)
+                except json.JSONDecodeError as e:
+                    print(f"  RUSAK    {nama_file}.json: {e}")
+                    drift.append(nama_file)
+                    continue
+            dibuat.append(nama_file)
+            if not info["regenerate"]:
+                dilewati.append(nama_file)
+                continue
+            if isi_disk != preset:
+                kunci = sorted(
+                    k for k in set(isi_disk) | set(preset)
+                    if isi_disk.get(k) != preset.get(k)
+                )
+                print(f"  DRIFT    {nama_file}.json: field berubah -> {', '.join(kunci)}")
+                drift.append(nama_file)
             continue
 
         if not info["regenerate"]:
@@ -578,7 +944,13 @@ def main():
         dibuat.append(nama_file)
 
     if args.check:
-        print(f"{len(dibuat)} preset JSON valid (semua punya sumber.status)")
+        if drift:
+            print(f"GAGAL: {len(drift)} preset tidak sinkron dengan generator: "
+                  f"{', '.join(drift)}")
+            print("Jalankan: python3 scripts/generate_campus_presets.py")
+            return 1
+        print(f"OK: {len(dibuat)} preset JSON valid, provenance lengkap, "
+              f"tanpa drift terhadap generator.")
         return 0
     print(f"Ditulis {len(dibuat)} preset: {', '.join(dibuat)}")
     if dilewati:

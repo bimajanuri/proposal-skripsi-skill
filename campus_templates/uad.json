@@ -6,28 +6,30 @@
     "thesis",
     "disertasi"
   ],
-  "verifikasi": "Preset ini BELUM diverifikasi ke pedoman resmi. Angka format berasal dari konvensi umum penulisan Indonesia, bukan dari dokumen Universitas Ahmad Dahlan. Selalu cocokkan dengan pedoman resmi fakultas/program studi Anda sebelum submit.",
+  "verifikasi": "Angka format diambil dari Pedoman Penyusunan Skripsi Fakultas Hukum UAD (2018), dikonfirmasi Panduan Penulisan Laporan Tugas Akhir FMIPA UAD (Edisi 2.1) (Fakultas Hukum UAD (2018) dan Fakultas MIPA UAD (edisi 2.1)). Pedoman ini berlaku untuk fakultas/program studi tersebut; fakultas lain di Universitas Ahmad Dahlan dapat berbeda. Cocokkan dengan pedoman unit Anda sebelum submit.",
   "sumber": {
-    "status": "konvensi-umum",
-    "dokumen": null,
-    "url": null,
-    "scope": "seluruh kampus (perlu konfirmasi)",
-    "catatan": "Ambil Pedoman Akademik/Penulisan Skripsi resmi UAD."
+    "status": "pedoman-resmi",
+    "dokumen": "Pedoman Penyusunan Skripsi Fakultas Hukum UAD (2018), dikonfirmasi Panduan Penulisan Laporan Tugas Akhir FMIPA UAD (Edisi 2.1)",
+    "url": "https://law.uad.ac.id/wp-content/uploads/Pedoman-Penyusunan-Skripsi-new-Copy-review.pdf",
+    "scope": "Fakultas Hukum UAD (2018) dan Fakultas MIPA UAD (edisi 2.1)",
+    "tahun": 2018,
+    "catatan": "Kedua fakultas konsisten: TNR 12 dan spasi 2. ANGKA MARGIN tidak tercantum pada halaman rujukan - wajib periksa bagian batas tepi pada pedoman asli."
   },
   "gaya_dokumen": {
     "ukuran_halaman": "A4",
     "margin": {
-      "atas": "4 cm",
-      "bawah": "3 cm",
-      "kiri": "4 cm",
-      "kanan": "3 cm"
+      "atas": "perlu konfirmasi (bagian batas tepi pedoman UAD)",
+      "bawah": "perlu konfirmasi",
+      "kiri": "perlu konfirmasi",
+      "kanan": "perlu konfirmasi"
     },
     "font_isi": "Times New Roman 12 pt",
     "font_judul": "Times New Roman 14 pt tebal",
-    "spasi": "1.5",
+    "spasi": "2",
     "rata_kanan_kiri": "justify",
-    "penomoran_halaman": "bagian awal angka romawi kecil, bagian inti angka arab, di tengah bawah",
-    "nomor_bab": "BAB I, BAB II, BAB III"
+    "penomoran_halaman": "bagian awal angka romawi kecil di bawah tengah; nomor bab memakai angka Romawi kapital",
+    "nomor_bab": "BAB I, BAB II, BAB III",
+    "catatan_tambahan": "FMIPA memberi tabel spasi rinci (judul bab 1 spasi dengan 6 pt setelah; baris pertama paragraf 3 spasi). 1 spasi untuk abstrak, kutipan langsung, dan daftar pustaka. Isi tabel dan judul gambar memakai 11. Kata kunci maksimal 5 kata italic. Judul skripsi TNR 14 kapital."
   },
   "sitasi": "APA 7",
   "daftar_pustaka": "heading \"DAFTAR PUSTAKA\" di halaman baru",

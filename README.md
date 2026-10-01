@@ -38,9 +38,15 @@ Skill ini **berkumpulan** dengan `paper-review` (tabel review literatur lengkap)
   atau `new-custom` untuk institusi lain
   - **Provenance wajib dicek**: `list` menandai `[resmi]` vs `[konvensi]`, dan
     `show <preset>` menampilkan dokumen/URL/cakupan sumber. Preset `[konvensi]`
-    **belum diverifikasi** — wajib dicocokkan manual. Saat ini **5 `[resmi]`**
-    (`its`, `ub`, `umn`, `unair`, `unpad`) dan **23 `[konvensi]`**; tiap `[resmi]`
-    hanya berlaku untuk fakultas/tahun di `scope`.
+    **belum diverifikasi** — wajib dicocokkan manual. Saat ini **16 `[resmi]`**
+    (`ipb`, `itb`, `its`, `telu`, `uad`, `ub`, `ugm`, `ui`, `uii`, `umn`, `ums`,
+    `umy`, `unair`, `undip`, `unhas`, `unpad`) dan **12 `[konvensi]`**; tiap
+    `[resmi]` hanya berlaku untuk fakultas/tahun di `scope`.
+  - **Nilai yang belum terverifikasi ditulis apa adanya**: bila dokumen resmi
+    tidak mencantumkan angka margin/spasi, preset mengisi
+    `"perlu konfirmasi (bagian X)"` — bukan angka tebakan.
+  - **Perbedaan antar fakultas**: `sumber.catatan` dan `verifikasi` menegaskan perbedaan
+    antar fakultas (mis. UGM FKH spasi 2 vs DTSL Teknik spasi 1,15).
 - **Pemeriksa naskah otomatis**: `id_language_check.py` (gaya bahasa Indonesia, struktur
   BAB I) dan `proposal_doctor.py` (penanda menggantung, placeholder, angka tanpa sumber,
   daftar pustaka tak dikenal, sinkronisasi DOCX). Kode keluar `1` = gate gagal
@@ -236,10 +242,10 @@ proposal-skripsi/
 │   ├── plagiarism_check.py              # Tumpang tindih teks: internal + vs folder sumber
 │   ├── proposal_doctor.py               # Pemeriksaan akhir naskah (penanda, angka, DOCX)
 │   ├── apply_campus_template.py         # Preset kampus: list/show/init/check/new-custom
-│   ├── generate_campus_presets.py       # Generator preset kampus (provenance wajib; --check)
+│   ├── generate_campus_presets.py       # Generator preset (provenance wajib; --check/--patch)
 │   └── build_docx.sh                    # Markdown -> DOCX (pandoc) + daftar isi
 ├── tests/
-│   ├── run_tests.sh                     # 60 smoke test seluruh script
+│   ├── run_tests.sh                     # 66 smoke test seluruh script
 │   ├── sample_dataset.csv
 │   ├── matriks_referensi_contoh.csv
 │   ├── codebook_contoh.csv
@@ -255,7 +261,7 @@ proposal-skripsi/
 bash tests/run_tests.sh
 ```
 
-60 smoke test: inventaris, profil dataset, nilai kritis t/chi-square/F, uji statistik,
+66 smoke test: inventaris, profil dataset, nilai kritis t/chi-square/F, uji statistik,
 pemeriksa bahasa, pemeriksa plagiarisme, proposal doctor, build DOCX, preset kampus,
 pengodean wawancara, ekspor referensi (termasuk validasi EndNote XML), provenance
 28 preset kampus, dan konsistensi dokumentasi. Semua harus `PASS` sebelum commit.
