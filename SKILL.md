@@ -115,8 +115,9 @@ python3 scripts/apply_campus_template.py new-custom --out-dir outputs/institusi_
 - **Setiap preset wajib dibaca provenance-nya** (`show <preset>` atau field `sumber`):
   - `pedoman-resmi` — angka format diambil dari dokumen resmi (ada `dokumen`, `url`,
     `scope`, `tahun`). Tetap hanya berlaku untuk fakultas/tahun di `scope`.
+    Saat ini 5 preset: `its`, `ub`, `umn`, `unair`, `unpad`.
   - `konvensi-umum` — **belum diverifikasi**; angka hanya konvensi umum Indonesia.
-    Wajib dicocokkan manual ke pedoman resmi.
+    Wajib dicocokkan manual ke pedoman resmi. Saat ini 23 preset.
 - Preset `ugm`, `ui`, `uny`, `itb`, `generic`, `custom` belum punya field `sumber`;
   perlakukan sebagai konvensi umum.
 - **Jangan mengarang angka preset.** Bila user punya pedoman resmi, **file/petunjuk user
@@ -723,7 +724,7 @@ untuk memastikan DOCX sinkron dengan Markdown.** Jangan ekspor dulu lalu memerik
 | [campus_templates/upnvj.json](campus_templates/upnvj.json) | UPN Veteran Jakarta — konvensi umum |
 | [campus_templates/upnv_jatim.json](campus_templates/upnv_jatim.json) | UPN Veteran Jawa Timur — konvensi umum |
 | [campus_templates/budi_luhur.json](campus_templates/budi_luhur.json) | Universitas Budi Luhur — konvensi umum |
-| [campus_templates/umn.json](campus_templates/umn.json) | Universitas Methodist Nygga — konvensi umum |
+| [campus_templates/umn.json](campus_templates/umn.json) | Universitas Multimedia Nusantara — **resmi**: Panduan Skripsi Kajian/FIKOM/MMT UMN |
 | [tests/run_tests.sh](tests/run_tests.sh) | Smoke test seluruh script (`bash tests/run_tests.sh`) |
 | [tests/sample_dataset.csv](tests/sample_dataset.csv) | Dataset contoh untuk uji script |
 | [tests/codebook_contoh.csv](tests/codebook_contoh.csv) | Contoh codebook pengodean |

@@ -31,13 +31,16 @@ Skill ini **berkumpulan** dengan `paper-review` (tabel review literatur lengkap)
   (`code_interview.py`), penanda kutipan `[K-n]`, dan **Gate 4-Kualitatif** tersendiri
 - **Preset template kampus**: 28 preset — `ugm`, `ui`, `uny`, `itb`, `ipb`, `unair`, `ub`,
   `its`, `undip`, `unpad`, `unhas`, `telu`, `binus`, `umy`, `uii`, `uad`, `ums`, `udinus`,
-  `umm`, `umb`, `gunadarma`, `upn_veteran`, `upnvj`, `upnv_jatim`, `budi_luhur`, `umn`,
+  `umm`, `umb`, `gunadarma`, `upn_veteran`, `upnvj`, `upnv_jatim`, `budi_luhur`,
+  `umn` (Universitas Multimedia Nusantara),
   plus `generic` dan `custom` — berisi gaya dokumen, gaya sitasi, daftar kelengkapan, dan
   struktur bab; bisa `init` (kerangka naskah) dan `check` (naskah vs ketentuan preset),
   atau `new-custom` untuk institusi lain
   - **Provenance wajib dicek**: `list` menandai `[resmi]` vs `[konvensi]`, dan
     `show <preset>` menampilkan dokumen/URL/cakupan sumber. Preset `[konvensi]`
-    **belum diverifikasi** ke pedoman resmi — wajib dicocokkan manual.
+    **belum diverifikasi** — wajib dicocokkan manual. Saat ini **5 `[resmi]`**
+    (`its`, `ub`, `umn`, `unair`, `unpad`) dan **23 `[konvensi]`**; tiap `[resmi]`
+    hanya berlaku untuk fakultas/tahun di `scope`.
 - **Pemeriksa naskah otomatis**: `id_language_check.py` (gaya bahasa Indonesia, struktur
   BAB I) dan `proposal_doctor.py` (penanda menggantung, placeholder, angka tanpa sumber,
   daftar pustaka tak dikenal, sinkronisasi DOCX). Kode keluar `1` = gate gagal

@@ -445,10 +445,34 @@ daftarkan("budi_luhur", konvensi(
     "budi_luhur", "Universitas Budi Luhur", "UBL",
     "Ambil Panduan Penulisan Skripsi resmi Universitas Budi Luhur."))
 
-# ── 22. UMN (Universitas Methodist Nygga) ────────────────────────────────────
-daftarkan("umn", konvensi(
-    "umn", "Universitas Methodist Nygga", "UMN",
-    "Ambil Panduan Penulisan Skripsi resmi Universitas Methodist Nygga (Medan)."))
+# ── 22. UMN (Universitas Multimedia Nusantara, Kelapa Dua/Tangerang) ──────────
+daftarkan(
+    "umn",
+    resmi(
+        "umn",
+        "Universitas Multimedia Nusantara",
+        "UMN",
+        "Panduan Skripsi Program Studi Kajian (Fakultas Komunikasi dan Penyiaran) UMN",
+        "https://www.umn.ac.id/wp-content/uploads/2021/04/Panduan-Skripsi-Kajian-2017_Final.pdf",
+        "Program Studi Kajian, FKP UMN (pedoman 2017); dikuatkan Panduan FIKOM & MMT UMN",
+        2017,
+        "Margin 4/3/4/3 cm + spasi 2 + TNR 12 konsisten di Kajian, FIKOM, dan MMT UMN. "
+        "Pengecualian: Program Studi Teknik Elektro UMN "
+        "(https://te.umn.ac.id/wp-content/uploads/2020/08/PANDUAN-TEKNIS-SKRIPSI-TE.pdf) "
+        "mengatur margin atas 3 cm dan MEWAJIBKAN daftar pustaka gaya IEEE.",
+        gaya(
+            margin={"atas": "4 cm", "bawah": "3 cm", "kiri": "4 cm", "kanan": "3 cm"},
+            spasi="2",
+            penomoran="bagian awal romawi kecil di tengah bawah (1,5 cm dari tepi bawah); "
+                       "bagian inti/akhir arab di kanan bawah",
+            align="Spasi ganda; 1 spasi untuk kutipan panjang, abstrak, tabel, gambar, "
+                  "daftar pustaka. Judul bab TNR 12 (Kajian) atau 14-16 (FIKOM/MMT). "
+                  "Judul skripsi maksimal 15 kata (TE).",
+        ),
+        sitasi="IEEE (wajib pada Program Studi Teknik Elektro); fakultas lain dapat berbeda — verifikasi",
+        kelengkapan_tambahan=["daftar grafik", "lembar pernyataan (tidak plagiat)"],
+    ),
+)
 
 
 # ── CLI & IO ─────────────────────────────────────────────────────────────────
